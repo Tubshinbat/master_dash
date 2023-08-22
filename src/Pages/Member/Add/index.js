@@ -53,6 +53,7 @@ const Add = (props) => {
   const [selectedKeys, setSelectedKeys] = useState([]);
   const [autoExpandParent, setAutoExpandParent] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModal, setModal] = useState(false);
   const [links, setLinks] = useState([]);
   const [experience, setExperience] = useState([]);
   const [experienceInput, setExperienceInput] = useState({
@@ -104,9 +105,46 @@ const Add = (props) => {
       toastControl("error", "Талбаруудыг гүйцэт бөглөнө үү");
     }
   };
+
   const handleCancel = () => {
     setIsModalOpen(false);
+    setInput({ name: "", link: "" });
   };
+
+  // Modal exp
+  const handleModal = () => {
+    setModal(true);
+    setExperienceInput(() => ({
+      companyName: "",
+      about: "",
+      date: "",
+      position: "",
+    }))
+  }
+
+  const handleSave = () => {
+    if(experienceInput.about && experience.companyName && experienceInput.date
+      && experienceInput.position){
+        setExperience((bi) => [...bi, {companyName: experienceInput.companyName, about: experienceInput.about, date: experienceInput.date, position: experienceInput.position}])
+      }
+      setExperienceInput(() => ({
+        companyName: "",
+        about: "",
+        date: "",
+        position: "",
+      }))
+      setModal(false)
+  }
+
+  const handleModalClose = () => {
+    setExperienceInput(() => ({
+      companyName: "",
+      about: "",
+      date: "",
+      position: "",
+    }))
+    setModal(false);
+  }
 
   const deleteLink = (index) => {
     const copyLinks = links;
@@ -580,6 +618,11 @@ const Add = (props) => {
           </div>
         </div>
       </div>
+
+      <Modal title="Туршилга нэмэх" open={isModal} footer={[
+        <Button key="back" onClick={handleModalClose}> Болих </Button>, 
+        <Button key="submit" type="primary" onClick={handleModal} > Нэмэх </Button>
+      ]}></Modal>
       <Modal
         title="Холбоос нэмэх"
         open={isModalOpen}

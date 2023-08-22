@@ -1,0 +1,529 @@
+.card-header {
+  margin-left: 0px;
+  padding-left: 0px;
+  font-size: 0.7rem;
+  background: none !important;
+}
+
+.excel__template {
+  text-decoration: none;
+  color: #2e76e4;
+}
+
+.head-link{
+  display: flex;
+  flex-direction: row;
+}
+
+
+/* .pagination li a {
+  color: black;
+  float: left;
+  padding: 4px 10px;
+  text-decoration: none;
+  border: 1px solid #ddd;
+}
+
+.pagination li.active a {
+  background-color: #4caf50;
+  color: white;
+  border: 1px solid none;
+}
+
+.pagination li:first-child {
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+
+.pagination li:last-child {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+} */
+button:focus {
+  outline: 0;
+}
+.DropdownEl {
+  margin-bottom: 0px;
+  padding: 3px 0px;
+  width: 100%;
+  padding-left: 15px;
+  cursor: pointer;
+  font-size: 0.7rem;
+}
+.DropdownEl:hover {
+  background: rgb(226, 226, 226);
+}
+
+.my-input {
+  border-radius: 0px;
+  font-size: 0.7rem;
+  padding-left: 20px;
+}
+
+.card-title {
+  font-family: "roboto", sans-serif;
+  font-size: 0.7rem;
+  padding-top: 10px;
+  padding-left: 20px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.card-title i {
+  font-size: 0.7rem;
+  margin-right: 10px;
+}
+
+.form-control {
+  height: calc(1.8125rem + 2px);
+  padding: 0.5rem 0.5rem !important;
+  font-size: 0.75rem !important;
+  line-height: 1.5;
+  border-radius: 0.2rem;
+}
+
+.custom-switch {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+}
+
+.custom-control-input {
+  cursor: pointer;
+}
+
+.myButton {
+  font-family: "Roboto", sans-serif;
+  font-weight: 500;
+  font-size: 0.7rem;
+  border: 0px solid #000;
+  background: none;
+  border-radius: 3px;
+  padding: 8px 25px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.myButton:hover {
+  color: rgb(54, 54, 54);
+  background: rgb(226, 226, 226);
+}
+
+.myButton i {
+  color: rgb(30, 149, 240);
+}
+
+.addBtn {
+  color: #fff;
+  background-color: #198754;
+  border-color: #198754;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.addBtn:hover {
+  background-color: #177047;
+  color: #fff;
+}
+
+.addBtn i,
+.subBtn i {
+  color: #fff;
+  margin-right: 5px;
+}
+
+.subBtn {
+  background: #21b36f !important;
+  color: #fff;
+}
+
+.subBtn:hover {
+  background: #1b9c60 !important;
+  color: #fff;
+}
+
+.tag-input-item {
+  font-size: 0.8rem !important;
+  line-height: 0.5 !important;
+}
+
+.refreshBtn {
+  border: 0.8px solid #ccc;
+  transition: all 0.3s;
+}
+
+.refreshBtn i {
+  color: rgb(0, 0, 0);
+  margin-right: 5px;
+}
+.deleteBtn {
+  background-color: rgb(247, 62, 62);
+  border: 0.8px solid rgb(247, 62, 62);
+  color: #fff;
+}
+
+.deleteBtn i,
+.editBtn i {
+  color: #fff;
+  margin-right: 5px;
+}
+
+.deleteBtn:hover {
+  background-color: rgb(192, 21, 21);
+  color: #fff;
+}
+
+.editBtn {
+  background-color: #5795f1;
+  color: #fff;
+}
+
+.editBtn:hover {
+  background-color: #2e76e4;
+  color: #fff;
+}
+
+.addForm {
+  font-family: "Roboto", sans-serif im !important;
+  font-size: 14px;
+}
+
+.addForm > p {
+  margin-bottom: 0px;
+}
+
+.title {
+  font-family: "Roboto", sans-serif !important;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.categoryId {
+  list-style-type: none;
+  margin-right: 10px;
+}
+
+.categoryBox {
+  margin-top: 0px;
+  font-family: "Roboto", sans-serif !important;
+}
+
+.categoryBox input {
+  cursor: pointer;
+}
+
+.categoryBox > ul,
+.categoryBox li {
+  list-style: none;
+  font-size: 14px;
+  line-height: 1.5rem;
+}
+.categoryBox > h5 > i {
+  font-size: 14px;
+  margin-right: 5px;
+}
+.categoryBox > h5 {
+  font-size: 16px;
+}
+
+.btns {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  margin-bottom: 20px;
+}
+
+.my-btn {
+  border: 0px;
+  padding: 7px 25px;
+  transition: all 0.3s;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.my-btn i {
+  margin-right: 5px;
+}
+
+.add-btn {
+  border: 0px;
+}
+
+.draft-btn {
+  background: #f1714a;
+  color: #fff;
+}
+
+.draft-btn:hover {
+  background: #fc4e19;
+  color: #fff;
+}
+
+.btns > button {
+  margin-right: 10px;
+  margin-top: 0px !important;
+}
+
+.btns > button > i {
+  font-size: 12px;
+}
+
+.litleError {
+  font-size: 12px;
+  font-family: "Roboto", sans-serif;
+  color: red;
+  margin-top: 12px;
+}
+
+.tags {
+  height: auto;
+  padding-left: 5px;
+}
+
+.activeOn,
+.activeOff {
+  display: flex;
+  height: 5px;
+  width: 5px;
+  border-radius: 50%;
+  margin: auto;
+}
+
+.activeOn {
+  background: rgb(92, 184, 92) !important;
+  background: linear-gradient(
+    33deg,
+    rgba(92, 184, 92, 1) 0%,
+    rgba(106, 244, 106, 1) 100%
+  ) !important;
+
+  box-shadow: rgba(92, 184, 92, 1) 0px 15px 25px,
+    rgba(92, 184, 92, 1) 0px 5px 10px;
+}
+
+.statusTd,
+.statusTh,
+.checkTd {
+  vertical-align: middle;
+  text-align: center;
+  align-items: center;
+}
+
+.activeOff {
+  background: rgb(165, 165, 165) !important;
+  background: linear-gradient(
+    33deg,
+    rgb(223, 223, 223) 0%,
+    rgb(126, 126, 126) 100%
+  ) !important;
+
+  box-shadow: rgba(92, 184, 92, 1) 0px 15px 25px,
+    rgba(92, 184, 92, 1) 0px 5px 10px;
+}
+
+.myTable > tr {
+  border-bottom: 1px solid #ccc !important;
+  border-top: 0px !important;
+  transition: all 0.25s;
+}
+
+.myTable tr:nth-child(1) {
+  background-color: #e7fdf6;
+  color: rgb(131, 131, 131);
+}
+
+.myTable > tr:hover {
+  background-color: rgb(240, 240, 240);
+  cursor: pointer;
+}
+
+.myTable th {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  vertical-align: middle;
+  padding: 1rem;
+  border: 1px solid rgb(221, 221, 221);
+}
+
+.myTable > tr > td {
+  padding: 0px 0.7rem;
+  vertical-align: middle;
+  font-size: 0.75rem;
+  border: 1px solid rgb(221, 221, 221);
+  text-align: center;
+}
+
+.tableImgBox {
+  width: 60px;
+  height: 60px;
+  overflow: hidden;
+}
+
+.tableImg {
+  width: auto;
+  height: 100%;
+}
+
+.categoryList a {
+  text-decoration: none;
+  color: #000;
+  border-radius: 2px;
+  border: 1px solid rgb(228, 227, 227);
+  margin-left: 10px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  transition: all 0.5s;
+}
+
+.categoryList a:hover {
+  background-color: rgb(235, 235, 235);
+}
+
+.PanelControl {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.PanelTabelHeader {
+  display: flex;
+  margin-bottom: 20px;
+}
+.PanelTabelHeader > button {
+  margin-right: 15px;
+}
+
+.searchPanel {
+  display: flex;
+  justify-content: flex-end;
+}
+.searchPanel > div {
+  margin-left: 10px;
+}
+
+.searchPanel > .form-control {
+  font-size: 0.9rem;
+}
+
+.newsTable {
+  font-family: "Roboto", sans-serif;
+  font-size: 0.8rem;
+}
+
+.newsTable thead {
+  padding: 30px 0px;
+}
+
+.newsTable tr {
+  cursor: pointer;
+}
+
+.newsTable tr:hover {
+  background-color: rgb(237, 237, 237);
+}
+
+.newsTable th,
+.newsTable td {
+  padding: 0.5rem !important;
+}
+
+.newsTable td a {
+  color: rgb(20, 47, 145);
+  font-weight: 600;
+}
+
+.allActions {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 10px;
+  height: 22px;
+  width: 22px;
+  padding: 5px;
+  font-size: 10px;
+  border-radius: 2px;
+  background: #ccc;
+  color: #fff;
+}
+
+a.actions {
+  color: #fff !important;
+}
+
+.view {
+  background: rgb(2, 141, 95);
+}
+.edit {
+  background: rgb(20, 47, 145);
+}
+
+.publish {
+  padding: 5px 14px;
+  border-radius: 10px;
+  background: rgb(54, 175, 23);
+  color: #fff;
+}
+
+.draft {
+  padding: 5px 14px;
+  border-radius: 10px;
+  background: rgb(54, 175, 23);
+  color: #fff;
+}
+
+.dashboardFooter {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.searchInput {
+  padding: 18px 15px;
+  border: none;
+  border-radius: 0px;
+  transition: all 0.2s;
+  align-items: left;
+  font-size: 0.9rem;
+}
+
+.notfound {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+.notfound p {
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+}
+.notfound > img {
+  width: 200px;
+}
+
+/* MODEL CSS */
+.modelBtnGroup {
+  display: flex;
+  flex-direction: row;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgb(238, 238, 238);
+}
+
+.modelBtnGroup > .modelBtn {
+  margin-right: 15px;
+}
+
+.modelBtn {
+  padding: 3px 20px;
+}

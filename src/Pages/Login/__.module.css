@@ -1,0 +1,83 @@
+.LoginPage {
+  position: relative;
+  display: flex;
+  font-family: "Exo 2", "Roboto Condensed", sans-serif;
+  flex-direction: column;
+  background: #303641;
+  width: 100vw;
+  height: 100vh;
+  text-align: center;
+}
+
+.LoginHeader {
+  position: relative;
+  background: #373e4a;
+  padding: 100px 0;
+  -moz-transition: all 550ms ease-in-out;
+  -webkit-transition: all 550ms ease-in-out;
+  -o-transition: all 550ms ease-in-out;
+  transition: all 550ms ease-in-out;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  row-gap: 10px;
+  color: #949494;
+  font-size: 13px;
+}
+
+.LoginHeader::after {
+  position: absolute;
+  content: "";
+  left: 50%;
+  bottom: 0;
+  margin-left: -12.5px;
+  width: 0px;
+  height: 0px;
+  border-style: solid;
+  border-width: 13px 12.5px 0 12.5px;
+  border-color: #373e4a transparent transparent transparent;
+  bottom: -13px;
+  -moz-transition: all 550ms ease-in-out;
+  -webkit-transition: all 550ms ease-in-out;
+  -o-transition: all 550ms ease-in-out;
+  transition: all 550ms ease-in-out;
+}
+
+.Logo {
+  width: 200px;
+  max-width: 90%;
+  margin: 0 auto;
+}
+
+.Logo img {
+  width: 100%;
+}
+
+.LoginContent {
+  position: relative;
+  width: 300px;
+  max-width: 100%;
+  margin: 0px auto;
+  padding-top: 60px;
+}
+
+.Forgot a {
+  color: #b4b4b4;
+}
+
+.Forgot a:hover {
+  color: #e4e4e4;
+}
+
+.LoginFooter {
+  display: flex;
+  position: absolute;
+  z-index: 1;
+  color: rgb(110, 110, 110);
+  bottom: 25px;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}

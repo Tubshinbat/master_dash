@@ -1,0 +1,28 @@
+.Header {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgb(228, 228, 228);
+}
+
+.Header h1 {
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 20px;
+  color: rgb(61, 61, 61);
+}
+
+.Bitem > a {
+  color: rgb(105, 105, 105) !important;
+  transition: all 0.2s;
+}
+
+.Bitem > a:hover {
+  color: rgb(121, 121, 121) !important;
+}
+
+.Breadcrumb a {
+  text-decoration: none;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 500;
+}

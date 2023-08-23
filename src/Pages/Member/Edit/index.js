@@ -9,6 +9,7 @@ import {
   Select,
   InputNumber,
   Tree,
+  Modal,
 } from "antd";
 import { connect } from "react-redux";
 import { Editor } from "@tinymce/tinymce-react";
@@ -54,7 +55,15 @@ const Add = (props) => {
   const [selectedKeys, setSelectedKeys] = useState([]);
   const [autoExpandParent, setAutoExpandParent] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModal, setModal] = useState(false);
   const [links, setLinks] = useState([]);
+  const [experience, setExperience] = useState([]);
+  const [experienceInput, setExperienceInput] = useState({
+    companyName: "",
+    date: "",
+    position: "",
+    about: "",
+  });
   const [linkInput, setInput] = useState({
     name: "",
     link: "",
@@ -69,6 +78,12 @@ const Add = (props) => {
   const init = () => {
     setAvatar({});
     setInput({ name: "", link: "" });
+    setExperienceInput(() => ({
+      companyName: "",
+      about: "",
+      date: "",
+      position: "",
+    }));
     props.loadPartner(`limit=1000`);
     props.loadMenus();
     props.getMember(props.match.params.id);
@@ -82,11 +97,16 @@ const Add = (props) => {
   const clear = () => {
     props.clear();
     setInput({ name: "", link: "" });
+    setExperienceInput(() => ({
+      companyName: "",
+      about: "",
+      date: "",
+      position: "",
+    }));
     form.resetFields();
     setAvatar({});
     setLoading(false);
   };
-
   // Modal functions
   const showModal = () => {
     setIsModalOpen(true);
@@ -100,14 +120,71 @@ const Add = (props) => {
       toastControl("error", "Талбаруудыг гүйцэт бөглөнө үү");
     }
   };
+
   const handleCancel = () => {
     setIsModalOpen(false);
+    setInput({ name: "", link: "" });
+  };
+
+  // Modal exp
+  const handleModal = () => {
+    setModal(true);
+    setExperienceInput(() => ({
+      companyName: "",
+      about: "",
+      date: "",
+      position: "",
+    }));
+  };
+
+  const handleSave = () => {
+    if (
+      experienceInput.about &&
+      experienceInput.companyName &&
+      experienceInput.date &&
+      experienceInput.position
+    ) {
+      setExperience((bi) => [
+        ...bi,
+        {
+          companyName: experienceInput.companyName,
+          about: experienceInput.about,
+          date: experienceInput.date,
+          position: experienceInput.position,
+        },
+      ]);
+      setExperienceInput(() => ({
+        companyName: "",
+        about: "",
+        date: "",
+        position: "",
+      }));
+      setModal(false);
+    } else {
+      toastControl("error", "Талбаруудыг гүйцэт бөглөнө үү");
+    }
+  };
+
+  const handleModalClose = () => {
+    setExperienceInput(() => ({
+      companyName: "",
+      about: "",
+      date: "",
+      position: "",
+    }));
+    setModal(false);
   };
 
   const deleteLink = (index) => {
     const copyLinks = links;
     copyLinks.splice(index, 1);
     setLinks(() => [...copyLinks]);
+  };
+
+  const deleteExp = (index) => {
+    const copyExp = experience;
+    copyExp.splice(index, 1);
+    setExperience(() => [...copyExp]);
   };
 
   // -- TREE FUNCTIONS
@@ -125,6 +202,8 @@ const Add = (props) => {
     if (st == "draft") values.status = false;
     if (avatar && avatar.name) values.picture = avatar.name;
     else values.picture = "";
+    values.links = JSON.stringify(links);
+    values.experience = JSON.stringify(experience);
 
     const data = {
       ...values,
@@ -240,7 +319,11 @@ const Add = (props) => {
       if (props.member.category && props.member.category.length > 0)
         setCheckedKeys(props.member.category.map((el) => el._id));
       setStatus(props.member.status);
+
       setMemberShip(props.member.memberShip);
+      props.member.experience &&
+        setExperience(JSON.parse(props.member.experience));
+      props.member.links && setLinks(JSON.parse(props.member.links));
       if (props.member.picture) {
         const url = base.cdnUrl + props.member.picture;
         const img = {
@@ -452,6 +535,58 @@ const Add = (props) => {
                               />
                             </Form.Item>
                           </div>
+                          <div className="col-12">
+                            <Form.Item label="Туршилга ">
+                              <div className="head-link">
+                                <Button type="primary" onClick={handleModal}>
+                                  Туршилга нэмэх
+                                </Button>
+                              </div>
+                            </Form.Item>
+                            <div className="links-list">
+                              {experience.map((el, index) => (
+                                <div
+                                  className="link-item"
+                                  key={index + "_" + el.companyName}
+                                >
+                                  {el.companyName} - {el.position}
+                                  <div
+                                    className="link-delete"
+                                    onClick={() => deleteExp(index)}
+                                  >
+                                    <i className="fa fa-trash" />
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                          <div className="col-12">
+                            <Form.Item label="Холбоос линкүүд">
+                              <div className="head-link">
+                                <Button type="primary" onClick={showModal}>
+                                  Линк нэмэх
+                                </Button>
+                              </div>
+                              <div className="links-list">
+                                {links.map((link, index) => (
+                                  <div
+                                    className="link-item"
+                                    key={index + "_" + link.name}
+                                  >
+                                    <a href={link.link} targer="_blank">
+                                      {link.name}
+                                    </a>
+                                    <div
+                                      className="link-delete"
+                                      onClick={() => deleteLink(index)}
+                                    >
+                                      <i className="fa fa-trash" />
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </Form.Item>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -575,6 +710,114 @@ const Add = (props) => {
           </div>
         </div>
       </div>
+      <Modal
+        title="Туршилга нэмэх"
+        open={isModal}
+        onCancel={handleModalClose}
+        footer={[
+          <Button key="back" onClick={handleModalClose}>
+            {" "}
+            Болих{" "}
+          </Button>,
+          <Button key="submit" type="primary" onClick={handleSave}>
+            {" "}
+            Нэмэх{" "}
+          </Button>,
+        ]}
+      >
+        <div className="input-box">
+          <label>Байгууллагын нэр</label>
+          <input
+            type="text"
+            placeholder="Байгууллагын нэр оруулна уу"
+            value={experienceInput.companyName}
+            onChange={(e) =>
+              setExperienceInput((bi) => ({
+                ...bi,
+                companyName: e.target.value,
+              }))
+            }
+          />
+        </div>
+        <div className="input-box">
+          <label>Албан тушаал</label>
+          <input
+            type="text"
+            placeholder="Албан тушаалаа оруулна уу"
+            value={experienceInput.position}
+            onChange={(e) =>
+              setExperienceInput((bi) => ({
+                ...bi,
+                position: e.target.value,
+              }))
+            }
+          />
+        </div>
+        <div className="input-box">
+          <label>Байгууллагын товч танилцуулга</label>
+          <textarea
+            type="text"
+            placeholder="Байгууллагын товч танилцуулга оруулна уу"
+            value={experienceInput.about}
+            onChange={(e) =>
+              setExperienceInput((bi) => ({
+                ...bi,
+                about: e.target.value,
+              }))
+            }
+          />
+        </div>
+        <div className="input-box">
+          <label>Ажилласан огноо</label>
+          <input
+            type="text"
+            placeholder="2020 - 2023 он хүртэл... ажиллаж байгаа гэх мэт"
+            value={experienceInput.date}
+            onChange={(e) =>
+              setExperienceInput((bi) => ({
+                ...bi,
+                date: e.target.value,
+              }))
+            }
+          />
+        </div>
+      </Modal>
+      <Modal
+        title="Холбоос нэмэх"
+        open={isModalOpen}
+        onCancel={handleCancel}
+        footer={[
+          <Button key="back" onClick={handleCancel}>
+            Болих
+          </Button>,
+          <Button key="submit" type="primary" onClick={handleOk}>
+            Нэмэх
+          </Button>,
+        ]}
+      >
+        <div className="input-box">
+          <label>Сайтын нэр</label>
+          <input
+            type="text"
+            placeholder="facebook, twitter, website... гэх мэт"
+            value={linkInput.name}
+            onChange={(e) =>
+              setInput((bi) => ({ ...bi, name: e.target.value }))
+            }
+          />
+        </div>
+        <div className="input-box">
+          <label>Линк</label>
+          <input
+            type="text"
+            placeholder="https://facebook.com/webr ...."
+            value={linkInput.link}
+            onChange={(e) =>
+              setInput((bi) => ({ ...bi, link: e.target.value }))
+            }
+          />
+        </div>
+      </Modal>
     </>
   );
 };

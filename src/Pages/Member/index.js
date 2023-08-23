@@ -202,7 +202,9 @@ const Members = (props) => {
       status: true,
       ...getColumnSearchProps("partner"),
       render: (text, record) => {
-        return <Tag color="blue"> {record.partner.name} </Tag>;
+        return (
+          <Tag color="blue"> {record.partner && record.partner.name} </Tag>
+        );
       },
     },
 
@@ -213,7 +215,9 @@ const Members = (props) => {
       status: true,
       ...getColumnSearchProps("category"),
       render: (text, record) => {
-        return record.category.map((el) => <Tag color="blue"> {el.name} </Tag>);
+        return record.category.map((el) => (
+          <Tag color="blue"> {el && el.name} </Tag>
+        ));
       },
     },
 

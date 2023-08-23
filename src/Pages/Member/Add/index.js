@@ -75,6 +75,12 @@ const Add = (props) => {
   // FUNCTIONS
   const init = () => {
     setInput({ name: "", link: "" });
+    setExperienceInput(() => ({
+      companyName: "",
+      about: "",
+      date: "",
+      position: "",
+    }));
     props.loadPartner(`limit=1000`);
     props.loadMenus();
   };
@@ -87,6 +93,12 @@ const Add = (props) => {
   const clear = () => {
     props.clear();
     setInput({ name: "", link: "" });
+    setExperienceInput(() => ({
+      companyName: "",
+      about: "",
+      date: "",
+      position: "",
+    }));
     form.resetFields();
     setAvatar({});
     setLoading(false);
@@ -119,22 +131,36 @@ const Add = (props) => {
       about: "",
       date: "",
       position: "",
-    }))
-  }
+    }));
+  };
 
   const handleSave = () => {
-    if(experienceInput.about && experience.companyName && experienceInput.date
-      && experienceInput.position){
-        setExperience((bi) => [...bi, {companyName: experienceInput.companyName, about: experienceInput.about, date: experienceInput.date, position: experienceInput.position}])
-      }
+    if (
+      experienceInput.about &&
+      experienceInput.companyName &&
+      experienceInput.date &&
+      experienceInput.position
+    ) {
+      setExperience((bi) => [
+        ...bi,
+        {
+          companyName: experienceInput.companyName,
+          about: experienceInput.about,
+          date: experienceInput.date,
+          position: experienceInput.position,
+        },
+      ]);
       setExperienceInput(() => ({
         companyName: "",
         about: "",
         date: "",
         position: "",
-      }))
-      setModal(false)
-  }
+      }));
+      setModal(false);
+    } else {
+      toastControl("error", "Талбаруудыг гүйцэт бөглөнө үү");
+    }
+  };
 
   const handleModalClose = () => {
     setExperienceInput(() => ({
@@ -142,14 +168,20 @@ const Add = (props) => {
       about: "",
       date: "",
       position: "",
-    }))
+    }));
     setModal(false);
-  }
+  };
 
   const deleteLink = (index) => {
     const copyLinks = links;
     copyLinks.splice(index, 1);
     setLinks(() => [...copyLinks]);
+  };
+
+  const deleteExp = (index) => {
+    const copyExp = experience;
+    copyExp.splice(index, 1);
+    setExperience(() => [...copyExp]);
   };
 
   // -- TREE FUNCTIONS
@@ -171,6 +203,7 @@ const Add = (props) => {
     if (checkedKeys && checkedKeys.length > 0)
       values.category = [...checkedKeys];
     values.links = JSON.stringify(links);
+    values.experience = JSON.stringify(experience);
 
     const data = {
       ...values,
@@ -469,6 +502,31 @@ const Add = (props) => {
                             </Form.Item>
                           </div>
                           <div className="col-12">
+                            <Form.Item label="Туршилга ">
+                              <div className="head-link">
+                                <Button type="primary" onClick={handleModal}>
+                                  Туршилга нэмэх
+                                </Button>
+                              </div>
+                            </Form.Item>
+                            <div className="links-list">
+                              {experience.map((el, index) => (
+                                <div
+                                  className="link-item"
+                                  key={index + "_" + el.companyName}
+                                >
+                                  {el.companyName} - {el.position}
+                                  <div
+                                    className="link-delete"
+                                    onClick={() => deleteExp(index)}
+                                  >
+                                    <i className="fa fa-trash" />
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                          <div className="col-12">
                             <Form.Item label="Холбоос линкүүд">
                               <div className="head-link">
                                 <Button type="primary" onClick={showModal}>
@@ -619,13 +677,82 @@ const Add = (props) => {
         </div>
       </div>
 
-      <Modal title="Туршилга нэмэх" open={isModal} footer={[
-        <Button key="back" onClick={handleModalClose}> Болих </Button>, 
-        <Button key="submit" type="primary" onClick={handleModal} > Нэмэх </Button>
-      ]}></Modal>
+      <Modal
+        title="Туршилга нэмэх"
+        open={isModal}
+        onCancel={handleModalClose}
+        footer={[
+          <Button key="back" onClick={handleModalClose}>
+            {" "}
+            Болих{" "}
+          </Button>,
+          <Button key="submit" type="primary" onClick={handleSave}>
+            {" "}
+            Нэмэх{" "}
+          </Button>,
+        ]}
+      >
+        <div className="input-box">
+          <label>Байгууллагын нэр</label>
+          <input
+            type="text"
+            placeholder="Байгууллагын нэр оруулна уу"
+            value={experienceInput.companyName}
+            onChange={(e) =>
+              setExperienceInput((bi) => ({
+                ...bi,
+                companyName: e.target.value,
+              }))
+            }
+          />
+        </div>
+        <div className="input-box">
+          <label>Албан тушаал</label>
+          <input
+            type="text"
+            placeholder="Албан тушаалаа оруулна уу"
+            value={experienceInput.position}
+            onChange={(e) =>
+              setExperienceInput((bi) => ({
+                ...bi,
+                position: e.target.value,
+              }))
+            }
+          />
+        </div>
+        <div className="input-box">
+          <label>Байгууллагын товч танилцуулга</label>
+          <textarea
+            type="text"
+            placeholder="Байгууллагын товч танилцуулга оруулна уу"
+            value={experienceInput.about}
+            onChange={(e) =>
+              setExperienceInput((bi) => ({
+                ...bi,
+                about: e.target.value,
+              }))
+            }
+          />
+        </div>
+        <div className="input-box">
+          <label>Ажилласан огноо</label>
+          <input
+            type="text"
+            placeholder="2020 - 2023 он хүртэл... ажиллаж байгаа гэх мэт"
+            value={experienceInput.date}
+            onChange={(e) =>
+              setExperienceInput((bi) => ({
+                ...bi,
+                date: e.target.value,
+              }))
+            }
+          />
+        </div>
+      </Modal>
       <Modal
         title="Холбоос нэмэх"
         open={isModalOpen}
+        onCancel={handleCancel}
         footer={[
           <Button key="back" onClick={handleCancel}>
             Болих

@@ -19,14 +19,14 @@ import css from "./__.module.css";
 import * as actions from "../../redux/actions/loginActions";
 
 const Login = (props) => {
-  const [cookies, setCookie] = useCookies(["gotiretoken"]);
+  const [cookies, setCookie] = useCookies(["nodetoken"]);
   // Init
   useEffect(() => {
-    if (cookies.gotiretoken) document.location.href = base.baseUrl;
+    if (cookies.nodetoken) document.location.href = base.baseUrl;
   });
 
   useEffect(() => {
-    if (props.token) setCookie("gotiretoken", props.token);
+    if (props.token) setCookie("nodetoken", props.token);
   }, [props.token]);
 
   // Ямар нэгэн алдаа эсвэл амжилттай үйлдэл хийгдвэл энд useEffect барьж аваад TOAST харуулна

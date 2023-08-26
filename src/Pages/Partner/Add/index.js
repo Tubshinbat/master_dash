@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Switch, Upload, message, Modal } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  Switch,
+  Upload,
+  message,
+  Modal,
+  Tree,
+} from "antd";
 import { connect } from "react-redux";
 import { Editor } from "@tinymce/tinymce-react";
 
@@ -10,7 +19,7 @@ import Loader from "../../../Components/Generals/Loader";
 
 //Actions
 import { tinymceAddPhoto } from "../../../redux/actions/imageActions";
-
+import { loadMenus } from "../../../redux/actions/memberCategoryActions";
 import * as actions from "../../../redux/actions/partnerActions";
 
 // Lib
@@ -18,6 +27,7 @@ import base from "../../../base";
 import axios from "../../../axios-base";
 import { toastControl } from "src/lib/toasControl";
 import { convertFromdata } from "../../../lib/handleFunction";
+import { menuGenerateData } from "src/lib/menuGenerate";
 
 const requiredRule = {
   required: true,
@@ -33,9 +43,14 @@ const Add = (props) => {
     name: "",
     link: "",
   });
+  const [gData, setGData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [links, setLinks] = useState([]);
   const [setProgress] = useState(0);
+  const [expandedKeys, setExpandedKeys] = useState([]);
+  const [checkedKeys, setCheckedKeys] = useState([]);
+  const [selectedKeys, setSelectedKeys] = useState([]);
+  const [autoExpandParent, setAutoExpandParent] = useState(true);
 
   const [loading, setLoading] = useState({
     visible: false,
@@ -61,6 +76,7 @@ const Add = (props) => {
 
   // FUNCTIONS
   const init = () => {
+    props.loadMenus();
     setInput({ name: "", link: "" });
   };
 
@@ -73,6 +89,19 @@ const Add = (props) => {
   };
 
   // -- TREE FUNCTIONS
+  const onExpand = (expandedKeysValue) => {
+    setExpandedKeys(expandedKeysValue);
+    setAutoExpandParent(false);
+  };
+  const onCheck = (checkedKeysValue) => {
+    // console.log(checkedKeysValue);
+    setCheckedKeys(checkedKeysValue);
+  };
+
+  const onSelect = (selectedKeysValue, info) => {
+    // console.log("onSelect", info);
+    setSelectedKeys(selectedKeysValue);
+  };
 
   const handleChange = (event) => {
     form.setFieldsValue({ about: event });
@@ -87,7 +116,8 @@ const Add = (props) => {
     }
 
     values.links = JSON.stringify(links);
-
+    if (checkedKeys && checkedKeys.length > 0)
+      values.category = [...checkedKeys];
     const data = {
       ...values,
     };
@@ -180,6 +210,11 @@ const Add = (props) => {
       setTimeout(() => props.history.replace("/partners"), 2000);
     }
   }, [props.success]);
+
+  useEffect(() => {
+    const data = menuGenerateData(props.menus);
+    setGData(data);
+  }, [props.menus]);
 
   return (
     <>
@@ -414,7 +449,26 @@ const Add = (props) => {
                       </div>
                     </div>
                   </div>
-
+                  <div className="card">
+                    <div class="card-header">
+                      <h3 class="card-title">Ангилал</h3>
+                    </div>
+                    <div className="card-body">
+                      <Form.Item name="category">
+                        <Tree
+                          checkable
+                          onExpand={onExpand}
+                          expandedKeys={expandedKeys}
+                          autoExpandParent={autoExpandParent}
+                          onCheck={onCheck}
+                          checkedKeys={checkedKeys}
+                          onSelect={onSelect}
+                          selectedKeys={selectedKeys}
+                          treeData={gData}
+                        />
+                      </Form.Item>
+                    </div>
+                  </div>
                   <div className="card">
                     <div class="card-header">
                       <h3 class="card-title">Лого оруулах</h3>
@@ -483,6 +537,7 @@ const mapStateToProps = (state) => {
     success: state.partnerReducer.success,
     error: state.partnerReducer.error,
     loading: state.partnerReducer.loading,
+    menus: state.memberCategoryReducer.menus,
   };
 };
 
@@ -490,6 +545,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     tinymceAddPhoto: (file) => dispatch(tinymceAddPhoto(file)),
     savePartner: (data) => dispatch(actions.savePartner(data)),
+    loadMenus: () => dispatch(loadMenus()),
     clear: () => dispatch(actions.clear()),
   };
 };

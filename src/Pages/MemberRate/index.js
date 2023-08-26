@@ -224,7 +224,7 @@ const Rates = (props) => {
           const key = el._id;
           delete el._id;
 
-          el.member = el.member && el.member.firstName;
+          el.member = el.member && el.member.name;
 
           el.createAt = moment(el.createAt)
             .utcOffset("+0800")

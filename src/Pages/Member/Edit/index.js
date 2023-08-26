@@ -214,6 +214,10 @@ const Add = (props) => {
       data.category = [];
     }
 
+    if (!data.partner) {
+      data.partner = "";
+    }
+
     if (deleteFile && deleteFile.length > 0) {
       deleteFile.map((file) => {
         axios

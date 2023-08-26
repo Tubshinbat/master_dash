@@ -81,25 +81,25 @@ function App(props) {
     required: "Заавал бөглөнө үү!",
   };
 
-  const [cookies] = useCookies(["gotiretoken", "language"]);
+  const [cookies] = useCookies(["nodetoken", "language"]);
 
   useEffect(() => {
-    if (cookies.gotiretoken) {
-      const token = cookies.gotiretoken;
+    if (cookies.nodetoken) {
+      const token = cookies.nodetoken;
       props.checkToken(token);
     }
   }, cookies);
 
   useEffect(() => {
     if (props.tokenError) {
-      Cookies.remove("gotiretoken");
+      Cookies.remove("nodetoken");
       document.location.href = "/login";
     }
   }, props.tokenError);
 
   return (
     <>
-      {cookies.gotiretoken ? (
+      {cookies.nodetoken ? (
         <ConfigProvider form={{ validateMessages }}>
           <CookiesProvider>
             <Header />

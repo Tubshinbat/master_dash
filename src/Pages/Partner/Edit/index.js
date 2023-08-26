@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Switch, Upload, message, Tag, Modal } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  Switch,
+  Upload,
+  message,
+  Tag,
+  Modal,
+  Tree,
+} from "antd";
 import { connect } from "react-redux";
 import { Editor } from "@tinymce/tinymce-react";
 
@@ -10,7 +20,7 @@ import Loader from "../../../Components/Generals/Loader";
 
 //Actions
 import { tinymceAddPhoto } from "../../../redux/actions/imageActions";
-
+import { loadMenus } from "../../../redux/actions/memberCategoryActions";
 import * as actions from "../../../redux/actions/partnerActions";
 
 // Lib
@@ -18,6 +28,7 @@ import base from "../../../base";
 import axios from "../../../axios-base";
 import { toastControl } from "src/lib/toasControl";
 import { convertFromdata } from "../../../lib/handleFunction";
+import { menuGenerateData } from "src/lib/menuGenerate";
 
 const requiredRule = {
   required: true,
@@ -30,6 +41,7 @@ const Edit = (props) => {
   const [form] = Form.useForm();
   const [logo, setLogo] = useState({});
   const [setProgress] = useState(0);
+  const [gData, setGData] = useState([]);
   const [deleteFiles, setDeleteFiles] = useState([]);
   const [linkInput, setInput] = useState({
     name: "",
@@ -44,6 +56,10 @@ const Edit = (props) => {
   const [checkedRadio, setCheckedRadio] = useState({
     status: true,
   });
+  const [expandedKeys, setExpandedKeys] = useState([]);
+  const [checkedKeys, setCheckedKeys] = useState([]);
+  const [selectedKeys, setSelectedKeys] = useState([]);
+  const [autoExpandParent, setAutoExpandParent] = useState(true);
 
   // Modal functions
   const showModal = () => {
@@ -71,6 +87,7 @@ const Edit = (props) => {
   // FUNCTIONS
   const init = () => {
     props.getPartner(props.match.params.id);
+    props.loadMenus();
   };
 
   const clear = () => {
@@ -81,6 +98,20 @@ const Edit = (props) => {
   };
 
   // -- TREE FUNCTIONS
+  const onExpand = (expandedKeysValue) => {
+    setExpandedKeys(expandedKeysValue);
+    setAutoExpandParent(false);
+  };
+
+  const onCheck = (checkedKeysValue) => {
+    // console.log(checkedKeysValue);
+    setCheckedKeys(checkedKeysValue);
+  };
+
+  const onSelect = (selectedKeysValue, info) => {
+    // console.log("onSelect", info);
+    setSelectedKeys(selectedKeysValue);
+  };
 
   const handleChange = (event) => {
     form.setFieldsValue({ about: event });
@@ -103,7 +134,12 @@ const Edit = (props) => {
 
     const data = {
       ...values,
+      category: [...checkedKeys],
     };
+
+    if (data.category.length === 0) {
+      data.category = [];
+    }
 
     const sendData = convertFromdata(data);
     props.updatePartner(props.match.params.id, sendData);
@@ -165,6 +201,11 @@ const Edit = (props) => {
     return () => clear();
   }, []);
 
+  useEffect(() => {
+    const data = menuGenerateData(props.menus);
+    setGData(data);
+  }, [props.menus]);
+
   // Ямар нэгэн алдаа эсвэл амжилттай үйлдэл хийгдвэл энд useEffect барьж аваад TOAST харуулна
   useEffect(() => {
     toastControl("error", props.error);
@@ -188,6 +229,9 @@ const Edit = (props) => {
           name: props.partner.logo,
           url: `${base.cdnUrl}${props.partner.logo}`,
         });
+
+      if (props.partner.category && props.partner.category.length > 0)
+        setCheckedKeys(props.partner.category.map((el) => el._id));
 
       setCheckedRadio((bc) => ({
         ...bc,
@@ -436,7 +480,26 @@ const Edit = (props) => {
                       </div>
                     </div>
                   </div>
-
+                  <div className="card">
+                    <div class="card-header">
+                      <h3 class="card-title">Ангилал</h3>
+                    </div>
+                    <div className="card-body">
+                      <Form.Item name="category">
+                        <Tree
+                          checkable
+                          onExpand={onExpand}
+                          expandedKeys={expandedKeys}
+                          autoExpandParent={autoExpandParent}
+                          onCheck={onCheck}
+                          checkedKeys={checkedKeys}
+                          onSelect={onSelect}
+                          selectedKeys={selectedKeys}
+                          treeData={gData}
+                        />
+                      </Form.Item>
+                    </div>
+                  </div>
                   <div className="card">
                     <div class="card-header">
                       <h3 class="card-title">Лого оруулах</h3>
@@ -506,6 +569,7 @@ const mapStateToProps = (state) => {
     error: state.partnerReducer.error,
     loading: state.partnerReducer.loading,
     partner: state.partnerReducer.partner,
+    menus: state.memberCategoryReducer.menus,
   };
 };
 
@@ -514,6 +578,7 @@ const mapDispatchToProps = (dispatch) => {
     tinymceAddPhoto: (file) => dispatch(tinymceAddPhoto(file)),
     updatePartner: (id, data) => dispatch(actions.updatePartner(id, data)),
     getPartner: (id) => dispatch(actions.getPartner(id)),
+    loadMenus: () => dispatch(loadMenus()),
     clear: () => dispatch(actions.clear()),
   };
 };

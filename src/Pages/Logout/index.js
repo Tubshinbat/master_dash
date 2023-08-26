@@ -8,7 +8,7 @@ const Logout = (props) => {
   const [cookies, setCookie, removeCookie] = useCookies();
 
   useEffect(() => {
-    removeCookie("gotiretoken");
+    removeCookie("nodetoken");
     props.logout();
   }, []);
 

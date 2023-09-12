@@ -381,6 +381,16 @@ const Edit = (props) => {
                             />
                           </Form.Item>
                         </div>
+                        <div className="col-6">
+                          <Form.Item name="long" label="Уртраг" hasFeedback>
+                            <Input placeholder="Уртраг оруулна уу" />
+                          </Form.Item>
+                        </div>
+                        <div className="col-6">
+                          <Form.Item name="lat" label="Өргөрөг" hasFeedback>
+                            <Input placeholder="Өргөрөг оруулна уу" />
+                          </Form.Item>
+                        </div>
                         <div className="col-12">
                           <Form.Item label="Холбоос линкүүд">
                             <div className="head-link">

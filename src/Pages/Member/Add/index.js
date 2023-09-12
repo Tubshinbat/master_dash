@@ -191,7 +191,7 @@ const Add = (props) => {
   };
 
   const handleChange = (event) => {
-    form.setFieldsValue({ details: event });
+    form.setFieldsValue({ about: event });
   };
 
   const handleAdd = (values, status = null) => {
@@ -499,6 +499,16 @@ const Add = (props) => {
                                 }}
                                 onEditorChange={(event) => handleChange(event)}
                               />
+                            </Form.Item>
+                          </div>
+                          <div className="col-6">
+                            <Form.Item name="long" label="Уртраг" hasFeedback>
+                              <Input placeholder="Уртраг оруулна уу" />
+                            </Form.Item>
+                          </div>
+                          <div className="col-6">
+                            <Form.Item name="lat" label="Өргөрөг" hasFeedback>
+                              <Input placeholder="Өргөрөг оруулна уу" />
                             </Form.Item>
                           </div>
                           <div className="col-12">

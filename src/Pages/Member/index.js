@@ -258,7 +258,7 @@ const Members = (props) => {
       dataIndex: "createUser",
       key: "createUser",
       title: "Бүртгэсэн",
-      status: true,
+      status: false,
       ...getColumnSearchProps("createUser"),
       sorter: (a, b) => handleSort(),
     },
@@ -274,7 +274,7 @@ const Members = (props) => {
       dataIndex: "createAt",
       key: "createAt",
       title: "Үүсгэсэн огноо",
-      status: true,
+      status: false,
       sorter: (a, b) => handleSort(),
     },
     {

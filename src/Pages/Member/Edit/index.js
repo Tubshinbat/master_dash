@@ -365,6 +365,25 @@ const Add = (props) => {
                     <div className="card-body">
                       <div className="row">
                         <div className="row">
+                          <div className="col-12">
+                            <Form.Item
+                              label="Эрх"
+                              name="role"
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Тус талбарыг заавал бөглөнө үү",
+                                },
+                              ]}
+                              tooltip="Хэрэглэгч зөвхөн өөрийн мэдээллийг засах боломжтой компани админ давхар гишүүдийн мэдээллүүдийг удирдана."
+                            >
+                              <Select showSearch placeholder="Эрх сонгоно уу">
+                                <Option value="user">Хэрэглэгч</Option>
+                                <Option value="partner">Компани админ</Option>
+                              </Select>
+                            </Form.Item>
+                          </div>
+
                           <div className="col-6">
                             <Form.Item
                               label="Бүтэн нэр"
@@ -405,6 +424,43 @@ const Add = (props) => {
                                 placeholder="Байгууллага холбоно уу"
                                 options={partners}
                               ></Select>
+                            </Form.Item>
+                          </div>
+                          <div className="col-6">
+                            <Form.Item
+                              name="email"
+                              label="Имэйл хаяг"
+                              hasFeedback
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Тус талбарыг заавал бөглөнө үү",
+                                },
+                                {
+                                  type: "email",
+                                  message: "Имэйл хаяг буруу байна!",
+                                },
+                              ]}
+                            >
+                              <Input placeholder="Имэйл хаягаа оруулна уу" />
+                            </Form.Item>
+                          </div>
+                          <div className="col-6">
+                            <Form.Item
+                              label="Утасны дугаар"
+                              name="phoneNumber"
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Тус талбарыг заавал бөглөнө үү",
+                                },
+                              ]}
+                              hasFeedback
+                            >
+                              <InputNumber
+                                placeholder="Утасны дугаараа оруулна уу"
+                                style={{ width: "100%" }}
+                              />
                             </Form.Item>
                           </div>
                           <div className="col-12">

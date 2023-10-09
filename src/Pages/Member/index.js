@@ -45,6 +45,11 @@ const Members = (props) => {
     },
   });
 
+  const changePasswrodModal = (value) => {
+    setVisible((bv) => ({ ...bv, password: true }));
+    setSelectedKey(value);
+  };
+
   const getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({
       setSelectedKeys,
@@ -194,7 +199,21 @@ const Members = (props) => {
       ...getColumnSearchProps("position"),
       sorter: (a, b) => handleSort(),
     },
-
+    {
+      key: "keyPassword",
+      title: "Нууц үг өөрчлөх",
+      status: true,
+      render: (text, record) => {
+        return (
+          <button
+            className="changePasswordBtn"
+            onClick={() => changePasswrodModal(record.key)}
+          >
+            Нууц үг солих
+          </button>
+        );
+      },
+    },
     {
       dataIndex: "partner",
       key: "partner",
@@ -268,7 +287,7 @@ const Members = (props) => {
   };
 
   const handleChangePassowrd = (values) => {
-    props.resetPasswordControl(selectedKey, values);
+    props.changePassword(selectedKey, { ...values, id: selectedKey });
   };
 
   // -- MODAL STATE
@@ -282,7 +301,6 @@ const Members = (props) => {
   useEffect(() => {
     if (props.error) {
       toastControl("error", props.error);
-      props.clear();
     }
   }, [props.error]);
 
@@ -812,6 +830,7 @@ const mapDispatchToProp = (dispatch) => {
   return {
     getMembers: (query) => dispatch(actions.loadMember(query)),
     deleteMultMembers: (ids) => dispatch(actions.deleteMultMember(ids)),
+    changePassword: (id, data) => dispatch(actions.changePassword(id, data)),
     clear: () => dispatch(actions.clear()),
   };
 };

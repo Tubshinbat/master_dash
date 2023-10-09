@@ -33,6 +33,41 @@ export const saveMemberInit = () => {
   };
 };
 
+export const changePassword = (id, data) => {
+  return function (dispatch) {
+    dispatch(changePasswordStart());
+    axios
+      .post(`members/changepassword`, data)
+      .then((response) => {
+        const updateUser = response.data.data;
+        dispatch(changePasswordSuccess(updateUser));
+      })
+      .catch((error) => {
+        dispatch(changePasswordError(errorBuild(error)));
+      });
+  };
+};
+
+export const changePasswordStart = () => {
+  return {
+    type: "MEMBER_CHANGE_PASSWORD_START",
+  };
+};
+
+export const changePasswordSuccess = (data) => {
+  return {
+    type: "MEMBER_CHANGE_PASSWORD_SUCCESS",
+    member: data,
+  };
+};
+
+export const changePasswordError = (error) => {
+  return {
+    type: "MEMBER_CHANGE_PASSWORD_ERROR",
+    error,
+  };
+};
+
 export const saveMember = (data) => {
   return function (dispatch, getState) {
     dispatch(saveMemberStart());

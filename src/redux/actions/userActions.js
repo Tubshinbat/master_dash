@@ -117,7 +117,6 @@ const getUsersError = (error) => {
   };
 };
 
-
 // CREATE USER
 export const createUser = (data) => {
   return function (dispatch) {

@@ -216,6 +216,28 @@ const reducer = (state = initialState, action) => {
         totalCount: null,
         error: action.error,
       };
+    // CHANGE PASSWORD
+    case "MEMBER_CHANGE_PASSWORD_START":
+      return {
+        ...state,
+        loading: true,
+        error: null,
+        success: null,
+      };
+    case "MEMBER_CHANGE_PASSWORD_SUCCESS":
+      return {
+        ...state,
+        loading: false,
+        error: null,
+        success: "Амжиллтай нууц үг шинэчлэгдлээ",
+      };
+    case "MEMBER_CHANGE_PASSWORD_ERROR":
+      return {
+        ...state,
+        loading: false,
+        error: action.error,
+        success: null,
+      };
     default:
       return state;
   }

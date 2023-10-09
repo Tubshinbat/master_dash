@@ -200,6 +200,20 @@ const Members = (props) => {
       sorter: (a, b) => handleSort(),
     },
     {
+      dataIndex: "phoneNumber",
+      key: "phoneNumber",
+      title: "Утасны дугаар",
+      status: true,
+      ...getColumnSearchProps("phoneNumber"),
+    },
+    {
+      dataIndex: "email",
+      key: "email",
+      title: "Имэйл хаяг",
+      status: true,
+      ...getColumnSearchProps("email"),
+    },
+    {
       key: "keyPassword",
       title: "Нууц үг өөрчлөх",
       status: true,

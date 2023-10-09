@@ -378,7 +378,7 @@ const Add = (props) => {
                               tooltip="Хэрэглэгч зөвхөн өөрийн мэдээллийг засах боломжтой компани админ давхар гишүүдийн мэдээллүүдийг удирдана."
                             >
                               <Select showSearch placeholder="Эрх сонгоно уу">
-                                <Option value="user">Хэрэглэгч</Option>
+                                <Option value="member">Хэрэглэгч</Option>
                                 <Option value="partner">Компани админ</Option>
                               </Select>
                             </Form.Item>

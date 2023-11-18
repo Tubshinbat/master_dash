@@ -202,7 +202,7 @@ const Add = (props) => {
   useEffect(() => {
     if (props.success) {
       toastControl("success", props.success);
-      setTimeout(() => props.history.replace("/product"), 2000);
+      setTimeout(() => props.history.replace("/products"), 2000);
     }
   }, [props.success]);
 
@@ -421,22 +421,6 @@ const Add = (props) => {
                                 setCheckedRadio((bc) => ({
                                   ...bc,
                                   isDiscount: checked,
-                                }))
-                              }
-                            />
-                          </Form.Item>
-                        </div>
-                        <div className="col-12">
-                          <Form.Item label="Шинэ хуучин эсэх" name="isNew">
-                            <Switch
-                              checkedChildren="Шинэ"
-                              unCheckedChildren="Хуучин"
-                              size="medium"
-                              checked={checkedRadio.isNew}
-                              onChange={(checked) =>
-                                setCheckedRadio((bc) => ({
-                                  ...bc,
-                                  isNew: checked,
                                 }))
                               }
                             />

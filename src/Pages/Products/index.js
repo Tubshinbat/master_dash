@@ -140,35 +140,17 @@ const Product = (props) => {
 
       filters: [
         {
-          text: "Зарагдаагүй",
+          text: "Идэвхтэй",
           value: "true",
         },
         {
-          text: "Зарагдсан",
+          text: "Ноорог",
           value: "false",
         },
       ],
       sorter: (a, b) => handleSort(),
     },
 
-    {
-      dataIndex: "isNew",
-      key: "isNew",
-      title: "Шинэ эсэх",
-      status: true,
-
-      filters: [
-        {
-          text: "Шинэ",
-          value: "true",
-        },
-        {
-          text: "Хуучин",
-          value: "false",
-        },
-      ],
-      sorter: (a, b) => handleSort(),
-    },
     {
       dataIndex: "isDiscount",
       key: "isDiscount",
@@ -264,15 +246,6 @@ const Product = (props) => {
       title: "Хямдарсан үнэ",
       status: false,
       ...getColumnSearchProps("discount"),
-      sorter: (a, b) => handleSort(),
-    },
-
-    {
-      dataIndex: "setOf",
-      key: "setOf",
-      title: "Багц",
-      status: true,
-      ...getColumnSearchProps("setOf"),
       sorter: (a, b) => handleSort(),
     },
 

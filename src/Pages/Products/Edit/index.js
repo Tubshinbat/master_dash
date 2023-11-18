@@ -58,7 +58,7 @@ const Edit = (props) => {
   const clear = () => {
     props.clear();
     form.resetFields();
-    props.clearCat();
+
     setGData([]);
     setExpandedKeys([]);
     setSelectedKeys([]);
@@ -552,7 +552,6 @@ const mapDispatchToProps = (dispatch) => {
     loadMenus: () => dispatch(loadMenus()),
     getProduct: (id) => dispatch(actions.getProduct(id)),
     clear: () => dispatch(actions.clear()),
-    clearCat: () => dispatch(clearCat()),
   };
 };
 

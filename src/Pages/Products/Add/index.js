@@ -22,10 +22,7 @@ import Loader from "../../../Components/Generals/Loader";
 
 //Actions
 import * as actions from "../../../redux/actions/productActions";
-import {
-  loadMenus,
-  clear as clearCat,
-} from "../../../redux/actions/memberCategoryActions";
+import { loadMenus } from "../../../redux/actions/memberCategoryActions";
 
 // Lib
 import base from "../../../base";
@@ -70,7 +67,7 @@ const Add = (props) => {
   const clear = () => {
     props.clear();
     form.resetFields();
-    props.clearCat();
+
     setPictures([]);
     setExpandedKeys([]);
     setSelectedKeys([]);
@@ -554,7 +551,6 @@ const mapDispatchToProps = (dispatch) => {
     loadMenus: () => dispatch(loadMenus()),
     saveProduct: (data) => dispatch(actions.saveProduct(data)),
     clear: () => dispatch(actions.clear()),
-    clearCat: () => dispatch(clearCat()),
   };
 };
 

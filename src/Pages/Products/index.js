@@ -323,7 +323,7 @@ const Product = (props) => {
     if (selectedRowKeys.length != 1) {
       toastControl("error", "Нэг өгөгдөл сонгоно уу");
     } else {
-      history.push(`/product/edit/${selectedRowKeys[0]}`);
+      history.push(`/products/edit/${selectedRowKeys[0]}`);
     }
   };
 
@@ -544,7 +544,7 @@ const Product = (props) => {
       }
       case "edit": {
         if (selectedRowKeys && selectedRowKeys.length === 1) {
-          props.history.replace("/product/edit/" + selectedRowKeys[0]);
+          props.history.replace("/products/edit/" + selectedRowKeys[0]);
         } else {
           toastControl("error", "Нэг өгөгдөл сонгоно уу");
         }
@@ -591,7 +591,7 @@ const Product = (props) => {
   // -- CONVER JSON  TO EXCEL
   const exportExcel = async () => {
     const query = queryBuild();
-    const response = await axios.get("product/excel?" + query);
+    const response = await axios.get("products/excel?" + query);
     let excelData = [];
     if (response) {
       const data = response.data.data;
@@ -690,7 +690,7 @@ const Product = (props) => {
                   <div className="datatable-actions">
                     <button
                       className="datatable-action add-bg"
-                      onClick={() => history.push(`/product/add`)}
+                      onClick={() => history.push(`/products/add`)}
                     >
                       <i className="fa fa-plus"></i> Нэмэх
                     </button>

@@ -150,9 +150,9 @@ function App(props) {
               <Route path="/news/add" component={NewsAdd} />
               <Route path="/news" exact component={News} />
               //Product
-              <Route path={"/product/edit/:id"} component={ProductEdit} />
-              <Route path="/product/add" component={ProductAdd} />
-              <Route path="/product" exact component={Product} />
+              <Route path={"/products/edit/:id"} component={ProductEdit} />
+              <Route path="/products/add" component={ProductAdd} />
+              <Route path="/products" exact component={Product} />
               // Websettings
               <Route
                 path="/web_settings/banners/add"

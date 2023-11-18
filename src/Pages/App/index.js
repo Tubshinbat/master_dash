@@ -62,7 +62,10 @@ import MemberEdit from "../Member/Edit";
 //Member categories
 import MemberCategory from "../Member/Member_categories";
 import MemberRates from "../MemberRate";
-
+// PRODUCT
+import Product from "../Products";
+import ProductAdd from "../Products/Add";
+import ProductEdit from "../Products/Edit";
 // WEBSETTINGS
 import WebSettings from "../WebSettings";
 import Socials from "../WebSettings/socials";
@@ -146,6 +149,10 @@ function App(props) {
               <Route path="/news/categories" exact component={NewsCategories} />
               <Route path="/news/add" component={NewsAdd} />
               <Route path="/news" exact component={News} />
+              //Product
+              <Route path={"/product/edit/:id"} component={ProductEdit} />
+              <Route path="/product/add" component={ProductAdd} />
+              <Route path="/product" exact component={Product} />
               // Websettings
               <Route
                 path="/web_settings/banners/add"

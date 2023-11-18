@@ -27,6 +27,7 @@ import userReducer from "./redux/reducer/userReducer";
 import webInfoReducer from "./redux/reducer/webinfoReducer";
 import memberReducer from "./redux/reducer/memberReducer";
 import memberCategoryReducer from "./redux/reducer/memberCategoryReducer";
+import productReducer from "./redux/reducer/productReducer";
 import memberRateReducer from "./redux/reducer/memberRateReducer";
 // styles
 import "./index.css";
@@ -63,6 +64,7 @@ const reducers = combineReducers({
   memberReducer,
   userReducer,
   webInfoReducer,
+  productReducer,
   memberCategoryReducer,
   memberRateReducer,
 });

@@ -647,7 +647,7 @@ const Product = (props) => {
   return (
     <>
       <div className="content-wrapper">
-        <PageTitle name="Бусад сэлбэгүүд" />
+        <PageTitle name="Бүтээгдэхүүн" />
         <div className="page-sub-menu">
           <Menus />
         </div>
@@ -656,7 +656,7 @@ const Product = (props) => {
           <div className="container-fluid">
             <div className="card datatable-card">
               <div className="card-header">
-                <h3 className="card-title">Бүх сэлбэгүүд</h3>
+                <h3 className="card-title">Бүтээгдэхүүн</h3>
               </div>
               <div className="card-body datatable-card-body">
                 <div className="datatable-header-tools">

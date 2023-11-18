@@ -125,6 +125,16 @@ const Side = (props) => {
                 <p>Үнэлгээ</p>
               </NavLink>
             </li>
+            <li className="nav-item">
+              <NavLink
+                to="/products"
+                className="nav-link"
+                activeClassName="active"
+              >
+                <i className="nav-icon fa fa-box" />
+                <p>Бүтээгдэхүүн</p>
+              </NavLink>
+            </li>
             <li className="nav-header">Бүртгэл</li>
             <li className="nav-item">
               <NavLink

@@ -342,11 +342,13 @@ const Add = (props) => {
   useEffect(() => {
     if (props.partners) {
       let data = [];
-      data = props.partners.map((el) => ({
+      data.push({ value: null, label: "Харьяалалгүй" });
+      const pdata = partners.map((el) => ({
         value: el._id,
         label: el.name,
       }));
-      data.push({ value: null, label: "Харьяалалгүй" });
+      data = data.concat(pdata);
+
       setPartners(data);
     }
   }, [props.partners]);

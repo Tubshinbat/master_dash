@@ -346,6 +346,7 @@ const Add = (props) => {
         value: el._id,
         label: el.name,
       }));
+      data.push({ value: null, label: "Харьяалалгүй" });
       setPartners(data);
     }
   }, [props.partners]);

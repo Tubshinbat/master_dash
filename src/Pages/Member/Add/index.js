@@ -304,10 +304,12 @@ const Add = (props) => {
   useEffect(() => {
     if (props.partners) {
       let data = [];
+
       data = props.partners.map((el) => ({
         value: el._id,
         label: el.name,
       }));
+      data.push({ value: null, label: "Харьяалалгүй" });
       setPartners(data);
     }
   }, [props.partners]);

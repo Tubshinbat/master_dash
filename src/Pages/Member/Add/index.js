@@ -305,7 +305,7 @@ const Add = (props) => {
     if (props.partners) {
       let data = [];
       data.push({ value: null, label: "Харьяалалгүй" });
-      const pdata = partners.map((el) => ({
+      const pdata = props.partners.map((el) => ({
         value: el._id,
         label: el.name,
       }));

@@ -95,10 +95,17 @@ function App(props) {
 
   useEffect(() => {
     if (props.tokenError) {
-      Cookies.remove("nodetoken");
+      cookies.remove("nodetoken");
       document.location.href = "/login";
     }
   }, props.tokenError);
+
+  useEffect(() => {
+    if (props.role && props.role !== "admin") {
+      Cookies.remove("nodetoken");
+      document.location.href = "/login";
+    }
+  }, props.role);
 
   return (
     <>
@@ -199,6 +206,7 @@ function App(props) {
 const mapStateToProps = (state) => {
   return {
     tokenError: state.tokenReducer.error,
+    role: state.tokenReducer.role,
   };
 };
 

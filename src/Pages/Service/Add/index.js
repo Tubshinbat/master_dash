@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Switch, Upload, message, InputNumber } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  Switch,
+  Upload,
+  message,
+  InputNumber,
+} from "antd";
 import { connect } from "react-redux";
 import { Editor } from "@tinymce/tinymce-react";
 
@@ -180,7 +188,10 @@ const Add = (props) => {
                             name="price"
                             rules={[requiredRule]}
                           >
-                            <InputNumber style={{width:"100%"}} placeholder="Үйлчилгээний үнэ оруулна уу" />
+                            <InputNumber
+                              style={{ width: "100%" }}
+                              placeholder="Үйлчилгээний үнэ оруулна уу"
+                            />
                           </Form.Item>
                         </div>
                         <div className="col-12">
@@ -205,7 +216,7 @@ const Add = (props) => {
                             rules={[requiredRule]}
                           >
                             <Editor
-                              apiKey="2nubq7tdhudthiy6wfb88xgs36os4z3f4tbtscdayg10vo1o"
+                              apiKey="p3ooelc5v0jqfzosggvh1ug9vc9yqyipicx8qd90s45tqsho"
                               init={{
                                 height: 300,
                                 menubar: false,

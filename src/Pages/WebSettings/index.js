@@ -329,7 +329,7 @@ const WebSettings = (props) => {
                             }
                           >
                             <Editor
-                              apiKey="p3ooelc5v0jqfzosggvh1ug9vc9yqyipicx8qd90s45tqsho"
+                              apiKey="2nubq7tdhudthiy6wfb88xgs36os4z3f4tbtscdayg10vo1o"
                               init={{
                                 height: 300,
                                 menubar: false,

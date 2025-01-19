@@ -96,7 +96,18 @@ const Side = (props) => {
               >
                 <i className="nav-icon fa fa-building" />
 
-                <p>Хамтрагчид</p>
+                <p>Байгуулга</p>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink
+                to="/course"
+                className="nav-link"
+                activeClassName="active"
+              >
+                <i className="nav-icon fa fa-book" />
+
+                <p>Сургалтууд</p>
               </NavLink>
             </li>
             <li className="nav-item">

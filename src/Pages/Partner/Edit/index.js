@@ -40,6 +40,7 @@ const { Dragger } = Upload;
 const Edit = (props) => {
   const [form] = Form.useForm();
   const [logo, setLogo] = useState({});
+  const [cover, setCover] = useState({});
   const [setProgress] = useState(0);
   const [gData, setGData] = useState([]);
   const [deleteFiles, setDeleteFiles] = useState([]);
@@ -124,6 +125,11 @@ const Edit = (props) => {
       values.logo = "";
     }
 
+    if (cover && cover.name) values.cover = cover.name;
+    else {
+      values.cover = "";
+    }
+
     values.links = JSON.stringify(links);
 
     if (deleteFiles && deleteFiles.length > 0) {
@@ -147,6 +153,7 @@ const Edit = (props) => {
 
   const handleRemove = (stType, file) => {
     if (stType === "logo") setLogo({});
+    if (stType === "cover") setCover({});
     setDeleteFiles((bf) => [...bf, file.name]);
   };
 
@@ -175,6 +182,7 @@ const Edit = (props) => {
         url: `${base.cdnUrl}${res.data.data}`,
       };
       if (type == "logo") setLogo(img);
+      if (type == "cover") setCover(img);
       onSuccess("Ok");
       message.success(res.data.data + " Хуулагдлаа");
       return img;
@@ -191,6 +199,16 @@ const Edit = (props) => {
     customRequest: (options) => uploadImage(options, "logo"),
     accept: "image/*",
     name: "logo",
+    listType: "picture",
+    maxCount: 1,
+  };
+
+  const coverOptions = {
+    onRemove: (file) => handleRemove("cover", file),
+    fileList: cover && cover.name && [cover],
+    customRequest: (options) => uploadImage(options, "cover"),
+    accept: "image/*",
+    name: "cover",
     listType: "picture",
     maxCount: 1,
   };
@@ -228,6 +246,12 @@ const Edit = (props) => {
         setLogo({
           name: props.partner.logo,
           url: `${base.cdnUrl}${props.partner.logo}`,
+        });
+
+      props.partner.cover &&
+        setCover({
+          name: props.partner.cover,
+          url: `${base.cdnUrl}${props.partner.cover}`,
         });
 
       if (props.partner.category && props.partner.category.length > 0)
@@ -421,6 +445,54 @@ const Edit = (props) => {
                       </div>
                     </div>
                   </div>
+                  <div className="row">
+                    <div className="col-lg-6">
+                      <div className="card">
+                        <div class="card-header">
+                          <h3 class="card-title">Лого оруулах</h3>
+                        </div>
+                        <div className="card-body">
+                          <Dragger
+                            {...logoOptions}
+                            className="upload-list-inline"
+                          >
+                            <p className="ant-upload-drag-icon">
+                              <InboxOutlined />
+                            </p>
+                            <p className="ant-upload-text">
+                              Зургаа энэ хэсэг рүү чирч оруулна уу
+                            </p>
+                            <p className="ant-upload-hint">
+                              Нэг болон түүнээс дээш файл хуулах боломжтой
+                            </p>
+                          </Dragger>
+                        </div>
+                      </div>
+                    </div>{" "}
+                    <div className="col-lg-6">
+                      <div className="card">
+                        <div class="card-header">
+                          <h3 class="card-title">Cover оруулах</h3>
+                        </div>
+                        <div className="card-body">
+                          <Dragger
+                            {...coverOptions}
+                            className="upload-list-inline"
+                          >
+                            <p className="ant-upload-drag-icon">
+                              <InboxOutlined />
+                            </p>
+                            <p className="ant-upload-text">
+                              Зургаа энэ хэсэг рүү чирч оруулна уу
+                            </p>
+                            <p className="ant-upload-hint">
+                              Нэг болон түүнээс дээш файл хуулах боломжтой
+                            </p>
+                          </Dragger>
+                        </div>
+                      </div>{" "}
+                    </div>
+                  </div>
                 </div>
                 <div className="col-4">
                   <div className="card">
@@ -508,24 +580,6 @@ const Edit = (props) => {
                           treeData={gData}
                         />
                       </Form.Item>
-                    </div>
-                  </div>
-                  <div className="card">
-                    <div class="card-header">
-                      <h3 class="card-title">Лого оруулах</h3>
-                    </div>
-                    <div className="card-body">
-                      <Dragger {...logoOptions} className="upload-list-inline">
-                        <p className="ant-upload-drag-icon">
-                          <InboxOutlined />
-                        </p>
-                        <p className="ant-upload-text">
-                          Зургаа энэ хэсэг рүү чирч оруулна уу
-                        </p>
-                        <p className="ant-upload-hint">
-                          Нэг болон түүнээс дээш файл хуулах боломжтой
-                        </p>
-                      </Dragger>
                     </div>
                   </div>
                 </div>

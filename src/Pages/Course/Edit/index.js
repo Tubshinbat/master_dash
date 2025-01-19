@@ -8,9 +8,11 @@ import {
   message,
   Modal,
   Tree,
+  Select,
 } from "antd";
 import { connect } from "react-redux";
 import { Editor } from "@tinymce/tinymce-react";
+import debounce from "lodash/debounce";
 
 //Components
 import PageTitle from "../../../Components/PageTitle";
@@ -18,9 +20,10 @@ import { InboxOutlined } from "@ant-design/icons";
 import Loader from "../../../Components/Generals/Loader";
 
 //Actions
-import { tinymceAddPhoto } from "../../../redux/actions/imageActions";
 import { loadMenus } from "../../../redux/actions/memberCategoryActions";
-import * as actions from "../../../redux/actions/partnerActions";
+import * as actions from "../../../redux/actions/courseActions";
+import { loadPartner } from "../../../redux/actions/partnerActions";
+import { loadMember } from "../../../redux/actions/memberActions";
 
 // Lib
 import base from "../../../base";
@@ -39,10 +42,12 @@ const { Dragger } = Upload;
 const Add = (props) => {
   const [form] = Form.useForm();
   const [logo, setLogo] = useState({});
-  const [cover, setCover] = useState({});
   const [linkInput, setInput] = useState({
     name: "",
     link: "",
+  });
+  const [checkedRadio, setCheckedRadio] = useState({
+    status: true,
   });
   const [gData, setGData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -52,6 +57,12 @@ const Add = (props) => {
   const [checkedKeys, setCheckedKeys] = useState([]);
   const [selectedKeys, setSelectedKeys] = useState([]);
   const [autoExpandParent, setAutoExpandParent] = useState(true);
+  const [partners, setPartners] = useState([]);
+  const [members, setMembers] = useState([]);
+
+  const [optionPartner, setOptionPartner] = useState([]);
+  const [optionMember, setOptionMember] = useState([]);
+  const [optionStudent, setOptionStudent] = useState([]);
 
   const [loading, setLoading] = useState({
     visible: false,
@@ -59,9 +70,7 @@ const Add = (props) => {
   });
 
   // Modal functions
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
+
   const handleOk = () => {
     if (linkInput.name && linkInput.link) {
       setLinks((bl) => [...bl, { name: linkInput.name, link: linkInput.link }]);
@@ -77,7 +86,10 @@ const Add = (props) => {
 
   // FUNCTIONS
   const init = () => {
+    props.getCourse(props.match.params.id);
+    props.loadPartner();
     props.loadMenus();
+    props.loadMember();
     setInput({ name: "", link: "" });
   };
 
@@ -104,6 +116,16 @@ const Add = (props) => {
     setSelectedKeys(selectedKeysValue);
   };
 
+  const handleSearch = debounce((value) => {
+    if (!value) return;
+    props.loadPartner(`name=${value}`);
+  }, 300);
+
+  const handleMemberSearch = debounce((value) => {
+    if (!value) return;
+    props.loadMember(`name=${value}`);
+  }, 300);
+
   const handleChange = (event) => {
     form.setFieldsValue({ about: event });
   };
@@ -111,10 +133,9 @@ const Add = (props) => {
   const handleAdd = (values, status = null) => {
     if (!values.status) values.status = true;
     if (status == "draft") values.status = false;
-    if (logo && logo.name) values.logo = logo.name;
-    if (cover && cover.name) values.cover = cover.name;
+    if (logo && logo.name) values.picture = logo.name;
     else {
-      return toastControl("error", "Лого оруулна уу");
+      return toastControl("error", "Сургалтын зураг оруулна уу");
     }
 
     values.links = JSON.stringify(links);
@@ -125,20 +146,13 @@ const Add = (props) => {
     };
 
     const sendData = convertFromdata(data);
-    props.savePartner(sendData);
-  };
-
-  const deleteLink = (index) => {
-    const copyLinks = links;
-    copyLinks.splice(index, 1);
-    setLinks(() => [...copyLinks]);
+    props.updateCourse(props.match.params.id, sendData);
   };
 
   const handleRemove = (stType, file) => {
     let index;
 
     if (stType === "logo") setLogo({});
-    if (stType === "cover") setCover({});
 
     axios
       .delete("/imgupload", { data: { file: file.name } })
@@ -175,7 +189,6 @@ const Add = (props) => {
         url: `${base.cdnUrl}${res.data.data}`,
       };
       if (type === "logo") setLogo(img);
-      if (type === "cover") setCover(img);
 
       onSuccess("Ok");
       message.success(res.data.data + " Хуулагдлаа");
@@ -197,16 +210,6 @@ const Add = (props) => {
     maxCount: 1,
   };
 
-  const coverOptions = {
-    onRemove: (file) => handleRemove("cover", file),
-    fileList: cover && cover.name && [cover],
-    customRequest: (options) => uploadImage(options, "cover"),
-    accept: "image/*",
-    name: "cover",
-    listType: "picture",
-    maxCount: 1,
-  };
-
   // USEEFFECT
   useEffect(() => {
     init();
@@ -221,7 +224,7 @@ const Add = (props) => {
   useEffect(() => {
     if (props.success) {
       toastControl("success", props.success);
-      setTimeout(() => props.history.replace("/partners"), 2000);
+      setTimeout(() => props.history.replace("/course"), 2000);
     }
   }, [props.success]);
 
@@ -230,10 +233,108 @@ const Add = (props) => {
     setGData(data);
   }, [props.menus]);
 
+  useEffect(() => {
+    if (props.partners && props.partners.length > 0) {
+      let data = props.partners.map((item) => {
+        return {
+          value: item._id,
+          label: item.name,
+        };
+      });
+
+      if (!data.some((opt) => opt.value === optionPartner.value)) {
+        data = [...data, optionPartner];
+      }
+
+      setPartners(data);
+    }
+  }, [props.partners, optionPartner]);
+
+  useEffect(() => {
+    if (props.members && props.members.length > 0) {
+      let data = props.members.map((item) => {
+        let label = item?.lastName || "";
+        item.name && (label += " " + item.name);
+        item.partner &&
+          item.partner.name &&
+          (label += " (" + item.partner.name + ")");
+        return {
+          value: item._id,
+          label,
+        };
+      });
+
+      let memberData = data;
+
+      if (!data.some((opt) => opt.value === optionMember.value)) {
+        memberData = [...data, optionMember];
+      }
+
+      if (!data.some((opt) => opt.value === optionStudent.value)) {
+        memberData = [...data, optionStudent];
+      }
+
+      setMembers(data);
+    }
+  }, [props.members, optionMember]);
+
+  useEffect(() => {
+    if (props.course) {
+      form.setFieldsValue({
+        ...props.course,
+        partner: props.course.partner?._id,
+        teachers: props.course?.teachers?.map((item) => item._id),
+        students: props.course?.students?.map((item) => item._id),
+      });
+
+      if (props.course?.partner) {
+        setOptionPartner({
+          value: props.course.partner._id,
+          label: props.course.partner.name,
+        });
+      }
+
+      if (props.course?.teachers && props.course.teachers.length > 0) {
+        setOptionMember(
+          props.course.teachers.map((item) => {
+            return {
+              value: item._id,
+              label: item.name,
+            };
+          })
+        );
+      }
+
+      if (props.course?.students && props.course.students.length > 0) {
+        setOptionStudent(
+          props.course.students.map((item) => {
+            return {
+              value: item._id,
+              label: item.name,
+            };
+          })
+        );
+      }
+
+      setLogo({
+        name: props.course.picture,
+        url: `${base.cdnUrl}${props.course.picture}`,
+      });
+
+      if (props.course.category && props.course.category.length > 0)
+        setCheckedKeys(props.course.category.map((el) => el._id));
+
+      setCheckedRadio((bc) => ({
+        ...bc,
+        status: props.course.status,
+      }));
+    }
+  }, [props.course]);
+
   return (
     <>
       <div className="content-wrapper">
-        <PageTitle name="Хамтрагч нэмэх" />
+        <PageTitle name="Сургалт шинэчлэх" />
         <div className="page-sub-menu"></div>
         <div className="content">
           <Loader show={loading.visible}> {loading.message} </Loader>
@@ -246,11 +347,11 @@ const Add = (props) => {
                       <div className="row">
                         <div className="col-12">
                           <Form.Item
-                            label="Компаний нэр"
+                            label="Сургалтын нэр"
                             name="name"
                             rules={[requiredRule]}
                           >
-                            <Input placeholder="Компаний нэрийг оруулна уу" />
+                            <Input placeholder="Сургалтын нэрийг оруулна уу" />
                           </Form.Item>
                         </div>
                         <div className="col-12">
@@ -370,90 +471,52 @@ const Add = (props) => {
                             />
                           </Form.Item>
                         </div>
-                        <div className="col-6">
-                          <Form.Item name="long" label="Уртраг" hasFeedback>
-                            <Input placeholder="Уртраг оруулна уу" />
+                        <div className="col-12">
+                          <Form.Item
+                            label="Сургалт зохион байгуулагч"
+                            name="partner"
+                            rules={[requiredRule]}
+                          >
+                            <Select
+                              showSearch
+                              placeholder="Байгуулга хайх..."
+                              options={partners}
+                              onSearch={handleSearch}
+                              filterOption={false}
+                            />
                           </Form.Item>
-                        </div>
-                        <div className="col-6">
-                          <Form.Item name="lat" label="Өргөрөг" hasFeedback>
-                            <Input placeholder="Өргөрөг оруулна уу" />
+                        </div>{" "}
+                        <div className="col-12">
+                          <Form.Item
+                            label="Сургалты багш нар"
+                            name="teachers"
+                            rules={[requiredRule]}
+                          >
+                            <Select
+                              showSearch
+                              mode="multiple"
+                              placeholder="Гишүүд хайх..."
+                              options={members}
+                              onSearch={handleMemberSearch}
+                              filterOption={false}
+                            />
                           </Form.Item>
                         </div>
                         <div className="col-12">
-                          <Form.Item label="Холбоос линкүүд">
-                            <div className="head-link">
-                              <Button type="primary" onClick={showModal}>
-                                Линк нэмэх
-                              </Button>
-                            </div>
-                            <div className="links-list">
-                              {links.map((link, index) => (
-                                <div
-                                  className="link-item"
-                                  key={index + "_" + link.name}
-                                >
-                                  <a href={link.link} targer="_blank">
-                                    {link.name}
-                                  </a>
-                                  <div
-                                    className="link-delete"
-                                    onClick={() => deleteLink(index)}
-                                  >
-                                    <i className="fa fa-trash" />
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
+                          <Form.Item
+                            label="Шавь нар"
+                            name="students"
+                            rules={[requiredRule]}
+                          >
+                            <Select
+                              showSearch
+                              mode="multiple"
+                              placeholder="Гишүүд хайх..."
+                              options={members}
+                              onSearch={handleMemberSearch}
+                              filterOption={false}
+                            />
                           </Form.Item>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="row">
-                    <div className="col-lg-6">
-                      <div className="card">
-                        <div class="card-header">
-                          <h3 class="card-title">Лого оруулах</h3>
-                        </div>
-                        <div className="card-body">
-                          <Dragger
-                            {...logoOptions}
-                            className="upload-list-inline"
-                          >
-                            <p className="ant-upload-drag-icon">
-                              <InboxOutlined />
-                            </p>
-                            <p className="ant-upload-text">
-                              Зургаа энэ хэсэг рүү чирч оруулна уу
-                            </p>
-                            <p className="ant-upload-hint">
-                              Нэг болон түүнээс дээш файл хуулах боломжтой
-                            </p>
-                          </Dragger>
-                        </div>
-                      </div>
-                    </div>{" "}
-                    <div className="col-lg-6">
-                      <div className="card">
-                        <div class="card-header">
-                          <h3 class="card-title">Cover оруулах</h3>
-                        </div>
-                        <div className="card-body">
-                          <Dragger
-                            {...coverOptions}
-                            className="upload-list-inline"
-                          >
-                            <p className="ant-upload-drag-icon">
-                              <InboxOutlined />
-                            </p>
-                            <p className="ant-upload-text">
-                              Зургаа энэ хэсэг рүү чирч оруулна уу
-                            </p>
-                            <p className="ant-upload-hint">
-                              Нэг болон түүнээс дээш файл хуулах боломжтой
-                            </p>
-                          </Dragger>
                         </div>
                       </div>
                     </div>
@@ -471,6 +534,13 @@ const Add = (props) => {
                             <Switch
                               checkedChildren="Идэвхтэй"
                               unCheckedChildren="Идэвхгүй"
+                              checked={checkedRadio.status}
+                              onChange={(checked) =>
+                                setCheckedRadio((bc) => ({
+                                  ...bc,
+                                  status: checked,
+                                }))
+                              }
                               size="medium"
                               defaultChecked
                             />
@@ -540,6 +610,24 @@ const Add = (props) => {
                       </Form.Item>
                     </div>
                   </div>
+                  <div className="card">
+                    <div class="card-header">
+                      <h3 class="card-title">Сургалтын зураг оруулах</h3>
+                    </div>
+                    <div className="card-body">
+                      <Dragger {...logoOptions} className="upload-list-inline">
+                        <p className="ant-upload-drag-icon">
+                          <InboxOutlined />
+                        </p>
+                        <p className="ant-upload-text">
+                          Зургаа энэ хэсэг рүү чирч оруулна уу
+                        </p>
+                        <p className="ant-upload-hint">
+                          Нэг болон түүнээс дээш файл хуулах боломжтой
+                        </p>
+                      </Dragger>
+                    </div>
+                  </div>
                 </div>
               </div>
             </Form>
@@ -587,17 +675,22 @@ const Add = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    success: state.partnerReducer.success,
-    error: state.partnerReducer.error,
-    loading: state.partnerReducer.loading,
+    success: state.courseReducer.success,
+    error: state.courseReducer.error,
+    loading: state.courseReducer.loading,
     menus: state.memberCategoryReducer.menus,
+    partners: state.partnerReducer.partners,
+    members: state.memberReducer.members,
+    course: state.courseReducer.course,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    tinymceAddPhoto: (file) => dispatch(tinymceAddPhoto(file)),
-    savePartner: (data) => dispatch(actions.savePartner(data)),
+    updateCourse: (id, data) => dispatch(actions.updateCourse(id, data)),
+    getCourse: (id) => dispatch(actions.getCourse(id)),
+    loadPartner: (query) => dispatch(loadPartner(query)),
+    loadMember: (query) => dispatch(loadMember(query)),
     loadMenus: () => dispatch(loadMenus()),
     clear: () => dispatch(actions.clear()),
   };

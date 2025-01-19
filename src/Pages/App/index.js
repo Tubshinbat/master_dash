@@ -26,7 +26,10 @@ import FaqEdit from "../Faq/Edit";
 import Gallery from "../Gallery";
 import GalleryAdd from "../Gallery/Add";
 import GalleryEdit from "../Gallery/Edit";
-
+//Gallery
+import Course from "../Course";
+import CourseAdd from "../Course/Add";
+import CourseEdit from "../Course/Edit";
 //MENU
 import Menus from "../Menus";
 import FooterMenu from "../Menus/footer";
@@ -140,6 +143,10 @@ function App(props) {
               <Route path="/users/add" exact component={UserAdd} />
               <Route path="/users/edit/:id" exact component={UserEdit} />
               <Route path="/users" exact component={User} />
+              //Course
+              <Route path="/course/add" exact component={CourseAdd} />
+              <Route path="/course/edit/:id" exact component={CourseEdit} />
+              <Route path="/course" exact component={Course} />
               //Member
               <Route path="/members/add" exact component={MemberAdd} />
               <Route path="/members/edit/:id" exact component={MemberEdit} />

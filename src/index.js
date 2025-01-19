@@ -29,6 +29,7 @@ import memberReducer from "./redux/reducer/memberReducer";
 import memberCategoryReducer from "./redux/reducer/memberCategoryReducer";
 import productReducer from "./redux/reducer/productReducer";
 import memberRateReducer from "./redux/reducer/memberRateReducer";
+import courseReducer from "./redux/reducer/courseReducer";
 // styles
 import "./index.css";
 
@@ -67,6 +68,7 @@ const reducers = combineReducers({
   productReducer,
   memberCategoryReducer,
   memberRateReducer,
+  courseReducer,
 });
 
 const middlewares = [loggerMiddlaware, thunk];

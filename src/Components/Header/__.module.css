@@ -1,0 +1,22 @@
+.Language {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 25px;
+}
+
+.Language span {
+  font-size: 0.9rem;
+  margin-right: 10px;
+}
+
+.Language select {
+  border: 1px solid #ccc;
+  font-size: 0.8rem;
+  padding: 4px;
+}
+
+.Header_nav li {
+  font-size: 0.9rem;
+  margin-right: 30px !important;
+}

@@ -6,645 +6,314 @@ import {
   Switch,
   Upload,
   message,
-  Tag,
   Modal,
   Tree,
+  Select,
 } from "antd";
-import { connect } from "react-redux";
-import { Editor } from "@tinymce/tinymce-react";
-
-//Components
-import PageTitle from "../../../Components/PageTitle";
 import { InboxOutlined } from "@ant-design/icons";
-import Loader from "../../../Components/Generals/Loader";
-
-//Actions
-import { tinymceAddPhoto } from "../../../redux/actions/imageActions";
-import { loadMenus } from "../../../redux/actions/memberCategoryActions";
-import * as actions from "../../../redux/actions/partnerActions";
-
-// Lib
-import base from "../../../base";
+import { Editor } from "@tinymce/tinymce-react";
 import axios from "../../../axios-base";
+import base from "../../../base";
 import { toastControl } from "src/lib/toasControl";
-import { convertFromdata } from "../../../lib/handleFunction";
 import { menuGenerateData } from "src/lib/menuGenerate";
+import PageTitle from "../../../Components/PageTitle";
 
+const { Dragger } = Upload;
 const requiredRule = {
   required: true,
   message: "Тус талбарыг заавал бөглөнө үү",
 };
 
-const { Dragger } = Upload;
-
-const Edit = (props) => {
+export default function PartnerEdit(props) {
+  const id = props.match.params.id;
   const [form] = Form.useForm();
-  const [logo, setLogo] = useState({});
-  const [cover, setCover] = useState({});
-  const [setProgress] = useState(0);
-  const [gData, setGData] = useState([]);
-  const [deleteFiles, setDeleteFiles] = useState([]);
-  const [linkInput, setInput] = useState({
-    name: "",
-    link: "",
-  });
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [logo, setLogo] = useState(null);
+  const [cover, setCover] = useState(null);
+  const [linkInput, setLinkInput] = useState({ name: "", url: "" });
   const [links, setLinks] = useState([]);
-  const [loading, setLoading] = useState({
-    visible: false,
-    message: "",
-  });
-  const [checkedRadio, setCheckedRadio] = useState({
-    status: true,
-  });
-  const [expandedKeys, setExpandedKeys] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [checkedKeys, setCheckedKeys] = useState([]);
-  const [selectedKeys, setSelectedKeys] = useState([]);
-  const [autoExpandParent, setAutoExpandParent] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Modal functions
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-  const handleOk = () => {
-    if (linkInput.name && linkInput.link) {
-      setLinks((bl) => [...bl, { name: linkInput.name, link: linkInput.link }]);
-      setInput({ name: "", link: "" });
-      setIsModalOpen(false);
-    } else {
-      toastControl("error", "Талбаруудыг гүйцэт бөглөнө үү");
-    }
-  };
-  const handleCancel = () => {
-    setIsModalOpen(false);
+  useEffect(() => {
+    fetchData();
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    const res = await axios.get("/member-categories");
+    setCategories(menuGenerateData(res.data.data));
   };
 
-  const deleteLink = (index) => {
-    const copyLinks = links;
-    copyLinks.splice(index, 1);
-    setLinks(() => [...copyLinks]);
-  };
+  const fetchData = async () => {
+    try {
+      const res = await axios.get(`/partners/${id}`);
+      const partner = res.data.data;
 
-  // FUNCTIONS
-  const init = () => {
-    props.getPartner(props.match.params.id);
-    props.loadMenus();
-  };
-
-  const clear = () => {
-    props.clear();
-    form.resetFields();
-    setLogo({});
-    setLoading(false);
-  };
-
-  // -- TREE FUNCTIONS
-  const onExpand = (expandedKeysValue) => {
-    setExpandedKeys(expandedKeysValue);
-    setAutoExpandParent(false);
-  };
-
-  const onCheck = (checkedKeysValue) => {
-    // console.log(checkedKeysValue);
-    setCheckedKeys(checkedKeysValue);
-  };
-
-  const onSelect = (selectedKeysValue, info) => {
-    // console.log("onSelect", info);
-    setSelectedKeys(selectedKeysValue);
-  };
-
-  const handleChange = (event) => {
-    form.setFieldsValue({ about: event });
-  };
-
-  const handleAdd = (values, status = null) => {
-    if (status == "draft") values.status = false;
-    if (logo && logo.name) values.logo = logo.name;
-    else {
-      values.logo = "";
-    }
-
-    if (cover && cover.name) values.cover = cover.name;
-    else {
-      values.cover = "";
-    }
-
-    values.links = JSON.stringify(links);
-
-    if (deleteFiles && deleteFiles.length > 0) {
-      deleteFiles.map(async (deleteFile) => {
-        await axios.delete("/imgupload", { data: { file: deleteFile } });
+      form.setFieldsValue({
+        name: partner.name,
+        email: partner.email,
+        phoneNumber: partner.phoneNumber,
+        about: partner.about,
+        long: partner?.location?.coordinates[0] || "",
+        lat: partner?.location?.coordinates[1] || "",
+        status: partner.status,
       });
+
+      setLinks(partner.links || []);
+      setCheckedKeys(partner.category?.map((el) => el._id));
+      setLogo(
+        partner.logo
+          ? { name: partner.logo, url: `${base.cdnUrl}${partner.logo}` }
+          : null
+      );
+      setCover(
+        partner.cover
+          ? { name: partner.cover, url: `${base.cdnUrl}${partner.cover}` }
+          : null
+      );
+    } catch (err) {
+      toastControl("error", err);
     }
-
-    const data = {
-      ...values,
-      category: [...checkedKeys],
-    };
-
-    if (data.category.length === 0) {
-      data.category = [];
-    }
-
-    const sendData = convertFromdata(data);
-    props.updatePartner(props.match.params.id, sendData);
   };
-
-  const handleRemove = (stType, file) => {
-    if (stType === "logo") setLogo({});
-    if (stType === "cover") setCover({});
-    setDeleteFiles((bf) => [...bf, file.name]);
-  };
-
-  // CONFIGS
 
   const uploadImage = async (options, type) => {
-    const { onSuccess, onError, file, onProgress } = options;
+    const { onSuccess, onError, file } = options;
     const fmData = new FormData();
-    const config = {
-      headers: { "content-type": "multipart/form-data" },
-      onUploadProgress: (event) => {
-        const percent = Math.floor((event.loaded / event.total) * 100);
-        setProgress(percent);
-        if (percent === 100) {
-          setTimeout(() => setProgress(0), 1000);
-        }
-        onProgress({ percent: (event.loaded / event.total) * 100 });
-      },
-    };
-
     fmData.append("file", file);
     try {
-      const res = await axios.post("/imgupload", fmData, config);
+      const res = await axios.post("/imgupload", fmData);
       const img = {
         name: res.data.data,
         url: `${base.cdnUrl}${res.data.data}`,
       };
-      if (type == "logo") setLogo(img);
-      if (type == "cover") setCover(img);
+      if (type === "logo") setLogo(img);
+      if (type === "cover") setCover(img);
       onSuccess("Ok");
-      message.success(res.data.data + " Хуулагдлаа");
-      return img;
+      message.success(`${res.data.data} хуулагдлаа`);
     } catch (err) {
       toastControl("error", err);
-      onError({ err });
-      return false;
+      onError(err);
     }
   };
 
-  const logoOptions = {
-    onRemove: (file) => handleRemove("logo", file),
-    fileList: logo && logo.name && [logo],
-    customRequest: (options) => uploadImage(options, "logo"),
-    accept: "image/*",
-    name: "logo",
-    listType: "picture",
-    maxCount: 1,
-  };
+  const handleSubmit = async (values) => {
+    const data = {
+      ...values,
+      logo: logo?.name,
+      cover: cover?.name,
+      links: links,
+      category: checkedKeys,
+      location:
+        values.long && values.lat
+          ? {
+              type: "Point",
+              coordinates: [parseFloat(values.long), parseFloat(values.lat)],
+            }
+          : undefined,
+    };
 
-  const coverOptions = {
-    onRemove: (file) => handleRemove("cover", file),
-    fileList: cover && cover.name && [cover],
-    customRequest: (options) => uploadImage(options, "cover"),
-    accept: "image/*",
-    name: "cover",
-    listType: "picture",
-    maxCount: 1,
-  };
+    delete data.long;
+    delete data.lat;
 
-  // USEEFFECT
-  useEffect(() => {
-    init();
-    return () => clear();
-  }, []);
+    const formData = new FormData();
+    Object.entries(data).forEach(([key, value]) => {
+      if (value === undefined || value === null || value === "") return;
+      if (Array.isArray(value) || typeof value === "object") {
+        formData.append(key, JSON.stringify(value));
+      } else {
+        formData.append(key, value);
+      }
+    });
 
-  useEffect(() => {
-    const data = menuGenerateData(props.menus);
-    setGData(data);
-  }, [props.menus]);
-
-  // Ямар нэгэн алдаа эсвэл амжилттай үйлдэл хийгдвэл энд useEffect барьж аваад TOAST харуулна
-  useEffect(() => {
-    toastControl("error", props.error);
-  }, [props.error]);
-
-  useEffect(() => {
-    if (props.success) {
-      toastControl("success", props.success);
-      setTimeout(() => props.history.replace("/partners"), 2000);
+    try {
+      setLoading(true);
+      await axios.put(`/partners/${id}`, formData);
+      toastControl("success", "Амжилттай шинэчлэгдлээ");
+    } catch (err) {
+      toastControl("error", err);
+    } finally {
+      setLoading(false);
     }
-  }, [props.success]);
-
-  useEffect(() => {
-    if (props.partner) {
-      form.setFieldsValue({ ...props.partner });
-
-      if (props.partner.links) setLinks(() => JSON.parse(props.partner.links));
-
-      props.partner.logo &&
-        setLogo({
-          name: props.partner.logo,
-          url: `${base.cdnUrl}${props.partner.logo}`,
-        });
-
-      props.partner.cover &&
-        setCover({
-          name: props.partner.cover,
-          url: `${base.cdnUrl}${props.partner.cover}`,
-        });
-
-      if (props.partner.category && props.partner.category.length > 0)
-        setCheckedKeys(props.partner.category.map((el) => el._id));
-
-      setCheckedRadio((bc) => ({
-        ...bc,
-        status: props.partner.status,
-      }));
-    }
-  }, [props.partner]);
+  };
 
   return (
     <>
       <div className="content-wrapper">
-        <PageTitle name="Хамтрагчийн мэдээлэл шинчлэх" />
-        <div className="page-sub-menu"></div>
-        <div className="content">
-          <Loader show={loading.visible}> {loading.message} </Loader>
-          <div className="container-fluid">
-            <Form layout="vertical" form={form}>
-              <div className="row">
-                <div className="col-8">
-                  <div className="card card-primary">
-                    <div className="card-body">
-                      <div className="row">
-                        <div className="col-12">
-                          <Form.Item
-                            label="Компаний нэр"
-                            name="name"
-                            rules={[requiredRule]}
-                          >
-                            <Input placeholder="Компаний нэрийг оруулна уу" />
-                          </Form.Item>
-                        </div>
+        <PageTitle name="Хамтрагч засах" />
+        <div className="container-fluid">
+          <Form layout="vertical" form={form}>
+            <div className="row">
+              <div className="col-md-8">
+                <div className="card card-primary">
+                  <div className="card-body">
+                    <Form.Item
+                      label="Компаний нэр"
+                      name="name"
+                      rules={[requiredRule]}
+                    >
+                      <Input placeholder="Компаний нэр" />
+                    </Form.Item>
 
-                        <div className="col-12">
-                          <Form.Item
-                            label="Дэлгэрэнгүй"
-                            name="about"
-                            getValueFromEvent={(e) =>
-                              e.target && e.target.getContent()
-                            }
-                            rules={[requiredRule]}
-                          >
-                            <Editor
-                              apiKey="p3ooelc5v0jqfzosggvh1ug9vc9yqyipicx8qd90s45tqsho"
-                              init={{
-                                height: 300,
-                                menubar: false,
-                                plugins: [
-                                  "advlist textcolor autolink lists link image charmap print preview anchor tinydrive ",
-                                  "searchreplace visualblocks code fullscreen",
-                                  "insertdatetime media table paste code help wordcount image media  code  table  ",
-                                ],
-                                toolbar:
-                                  "mybutton | addPdf |  image | undo redo | fontselect fontsizeselect formatselect blockquote  | bold italic forecolor  backcolor | \
-                        alignleft aligncenter alignright alignjustify | \
-                        bullist numlist outdent indent | removeformat | help | link  | quickbars | media | code | tableprops tabledelete | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol",
-                                file_picker_types: "image",
-                                tinydrive_token_provider: `${base.apiUrl}users/jwt`,
-                                automatic_uploads: false,
-                                setup: (editor) => {
-                                  editor.ui.registry.addButton("mybutton", {
-                                    text: "Файл оруулах",
-                                    onAction: () => {
-                                      var input =
-                                        document.createElement("input");
-                                      input.setAttribute("type", "file");
-                                      input.onchange = async function () {
-                                        var file = this.files[0];
-                                        const fData = new FormData();
-                                        fData.append("file", file);
-                                        setLoading({
-                                          visible: true,
-                                          message:
-                                            "Түр хүлээнэ үү файл хуулж байна",
-                                        });
-                                        const res = await axios.post(
-                                          "/file",
-                                          fData
-                                        );
-                                        const url =
-                                          `${base.cdnUrl}` + res.data.data;
-                                        editor.insertContent(
-                                          `<a href="${url}"> ${res.data.data} </a>`
-                                        );
-                                        setLoading({
-                                          visible: false,
-                                        });
-                                      };
-                                      input.click();
-                                    },
-                                  });
-                                  editor.ui.registry.addButton("addPdf", {
-                                    text: "PDF Файл оруулах",
-                                    onAction: () => {
-                                      let input =
-                                        document.createElement("input");
-                                      input.setAttribute("type", "file");
-                                      input.setAttribute("accept", ".pdf");
-                                      input.onchange = async function () {
-                                        let file = this.files[0];
-                                        const fData = new FormData();
-                                        fData.append("file", file);
-                                        setLoading({
-                                          visible: true,
-                                          message:
-                                            "Түр хүлээнэ үү файл хуулж байна",
-                                        });
-                                        const res = await axios.post(
-                                          "/file",
-                                          fData
-                                        );
-                                        const url = base.cdnUrl + res.data.data;
-                                        editor.insertContent(
-                                          `<iframe src="${url}" style="width:100%; min-height: 500px"> </iframe>`
-                                        );
-                                        setLoading({
-                                          visible: false,
-                                        });
-                                      };
-                                      input.click();
-                                    },
-                                  });
-                                },
-                                file_picker_callback: function (
-                                  cb,
-                                  value,
-                                  meta
-                                ) {
-                                  var input = document.createElement("input");
-                                  input.setAttribute("type", "file");
-                                  input.setAttribute("accept", "image/*");
-                                  input.onchange = async function () {
-                                    var file = this.files[0];
-                                    const fData = new FormData();
-                                    fData.append("file", file);
-                                    const res = await axios.post(
-                                      "/imgupload",
-                                      fData
-                                    );
-                                    const url =
-                                      `${base.cdnUrl}` + res.data.data;
-                                    cb(url);
-                                  };
-                                  input.click();
-                                },
-                              }}
-                              onEditorChange={(event) => handleChange(event)}
-                            />
-                          </Form.Item>
-                        </div>
-                        <div className="col-6">
-                          <Form.Item name="long" label="Уртраг" hasFeedback>
-                            <Input placeholder="Уртраг оруулна уу" />
-                          </Form.Item>
-                        </div>
-                        <div className="col-6">
-                          <Form.Item name="lat" label="Өргөрөг" hasFeedback>
-                            <Input placeholder="Өргөрөг оруулна уу" />
-                          </Form.Item>
-                        </div>
-                        <div className="col-12">
-                          <Form.Item label="Холбоос линкүүд">
-                            <div className="head-link">
-                              <Button type="primary" onClick={showModal}>
-                                Линк нэмэх
-                              </Button>
-                            </div>
-                            <div className="links-list">
-                              {links.map((link, index) => (
-                                <div
-                                  className="link-item"
-                                  key={index + "_" + link.name}
-                                >
-                                  <a href={link.link} targer="_blank">
-                                    {link.name}
-                                  </a>
-                                  <div
-                                    className="link-delete"
-                                    onClick={() => deleteLink(index)}
-                                  >
-                                    <i className="fa fa-trash" />
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </Form.Item>
-                        </div>
+                    <Form.Item
+                      label="Имэйл"
+                      name="email"
+                      rules={[{ type: "email" }]}
+                    >
+                      <Input placeholder="Имэйл" />
+                    </Form.Item>
+
+                    <Form.Item
+                      label="Утас"
+                      name="phoneNumber"
+                      rules={[requiredRule]}
+                    >
+                      <Input placeholder="Утасны дугаар" />
+                    </Form.Item>
+
+                    <Form.Item
+                      label="Дэлгэрэнгүй"
+                      name="about"
+                      getValueFromEvent={(e) => e?.target?.getContent()}
+                      rules={[requiredRule]}
+                    >
+                      <Editor
+                        apiKey="p3ooelc5v0jqfzosggvh1ug9vc9yqyipicx8qd90s45tqsho"
+                        init={{ height: 300, menubar: false }}
+                      />
+                    </Form.Item>
+
+                    <div className="row">
+                      <div className="col-6">
+                        <Form.Item label="Уртраг" name="long">
+                          <Input />
+                        </Form.Item>
+                      </div>
+                      <div className="col-6">
+                        <Form.Item label="Өргөрөг" name="lat">
+                          <Input />
+                        </Form.Item>
                       </div>
                     </div>
-                  </div>
-                  <div className="row">
-                    <div className="col-lg-6">
-                      <div className="card">
-                        <div class="card-header">
-                          <h3 class="card-title">Лого оруулах</h3>
-                        </div>
-                        <div className="card-body">
-                          <Dragger
-                            {...logoOptions}
-                            className="upload-list-inline"
-                          >
-                            <p className="ant-upload-drag-icon">
-                              <InboxOutlined />
-                            </p>
-                            <p className="ant-upload-text">
-                              Зургаа энэ хэсэг рүү чирч оруулна уу
-                            </p>
-                            <p className="ant-upload-hint">
-                              Нэг болон түүнээс дээш файл хуулах боломжтой
-                            </p>
-                          </Dragger>
-                        </div>
-                      </div>
-                    </div>{" "}
-                    <div className="col-lg-6">
-                      <div className="card">
-                        <div class="card-header">
-                          <h3 class="card-title">Cover оруулах</h3>
-                        </div>
-                        <div className="card-body">
-                          <Dragger
-                            {...coverOptions}
-                            className="upload-list-inline"
-                          >
-                            <p className="ant-upload-drag-icon">
-                              <InboxOutlined />
-                            </p>
-                            <p className="ant-upload-text">
-                              Зургаа энэ хэсэг рүү чирч оруулна уу
-                            </p>
-                            <p className="ant-upload-hint">
-                              Нэг болон түүнээс дээш файл хуулах боломжтой
-                            </p>
-                          </Dragger>
-                        </div>
-                      </div>{" "}
-                    </div>
-                  </div>
-                </div>
-                <div className="col-4">
-                  <div className="card">
-                    <div class="card-header">
-                      <h3 class="card-title">ТОХИРГОО</h3>
-                    </div>
-                    <div className="card-body">
-                      <div className="row">
-                        <div className="col-6">
-                          <Form.Item label="Идэвхтэй эсэх" name="status">
-                            <Switch
-                              checkedChildren="Идэвхтэй"
-                              unCheckedChildren="Идэвхгүй"
-                              checked={checkedRadio.status}
-                              onChange={(checked) =>
-                                setCheckedRadio((bc) => ({
-                                  ...bc,
-                                  status: checked,
-                                }))
+
+                    <Form.Item label="Холбоос линкүүд">
+                      <Button onClick={() => setIsModalOpen(true)}>
+                        Линк нэмэх
+                      </Button>
+                      <div>
+                        {links.map((link, idx) => (
+                          <div key={idx}>
+                            {link.name} - {link.url}
+                            <Button
+                              danger
+                              size="small"
+                              onClick={() =>
+                                setLinks(links.filter((_, i) => i !== idx))
                               }
-                              size="medium"
-                              defaultChecked
-                            />
-                          </Form.Item>
-                        </div>
+                            >
+                              Устгах
+                            </Button>
+                          </div>
+                        ))}
                       </div>
-                    </div>
-                    <div className="card-footer">
-                      <div className="control-bottons">
-                        <Button
-                          key="submit"
-                          htmlType="submit"
-                          className="add-button"
-                          loading={props.loading}
-                          onClick={() => {
-                            form
-                              .validateFields()
-                              .then((values) => {
-                                handleAdd(values);
-                              })
-                              .catch((info) => {
-                                // console.log(info);
-                              });
-                          }}
-                        >
-                          Хадгалах
-                        </Button>
-                        <Button
-                          key="draft"
-                          type="primary"
-                          onClick={() => {
-                            form
-                              .validateFields()
-                              .then((values) => {
-                                handleAdd(values, "draft");
-                              })
-                              .catch((info) => {
-                                // console.log(info);
-                              });
-                          }}
-                        >
-                          Ноороглох
-                        </Button>
-                        <Button onClick={() => props.history.goBack()}>
-                          Буцах
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="card">
-                    <div class="card-header">
-                      <h3 class="card-title">Ангилал</h3>
-                    </div>
-                    <div className="card-body">
-                      <Form.Item name="category">
-                        <Tree
-                          checkable
-                          onExpand={onExpand}
-                          expandedKeys={expandedKeys}
-                          autoExpandParent={autoExpandParent}
-                          onCheck={onCheck}
-                          checkedKeys={checkedKeys}
-                          onSelect={onSelect}
-                          selectedKeys={selectedKeys}
-                          treeData={gData}
-                        />
-                      </Form.Item>
-                    </div>
+                    </Form.Item>
                   </div>
                 </div>
               </div>
-            </Form>
-          </div>
+
+              <div className="col-md-4">
+                <div className="card card-primary">
+                  <div className="card-body">
+                    <Form.Item
+                      label="Статус"
+                      name="status"
+                      valuePropName="checked"
+                    >
+                      <Switch defaultChecked />
+                    </Form.Item>
+
+                    <Form.Item label="Ангилал">
+                      <Tree
+                        checkable
+                        checkedKeys={checkedKeys}
+                        onCheck={setCheckedKeys}
+                        treeData={categories}
+                      />
+                    </Form.Item>
+
+                    <Dragger
+                      {...{
+                        onRemove: () => setLogo(null),
+                        fileList: logo ? [logo] : [],
+                        customRequest: (options) =>
+                          uploadImage(options, "logo"),
+                        accept: "image/*",
+                        listType: "picture",
+                        maxCount: 1,
+                      }}
+                    >
+                      <p>Лого оруулах</p>
+                    </Dragger>
+
+                    <Dragger
+                      {...{
+                        onRemove: () => setCover(null),
+                        fileList: cover ? [cover] : [],
+                        customRequest: (options) =>
+                          uploadImage(options, "cover"),
+                        accept: "image/*",
+                        listType: "picture",
+                        maxCount: 1,
+                      }}
+                    >
+                      <p>Cover оруулах</p>
+                    </Dragger>
+                  </div>
+
+                  <div className="card-footer">
+                    <Button
+                      type="primary"
+                      loading={loading}
+                      onClick={() => form.validateFields().then(handleSubmit)}
+                    >
+                      Хадгалах
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Form>
         </div>
-      </div>
-      <Modal
-        title="Холбоос нэмэх"
-        open={isModalOpen}
-        footer={[
-          <Button key="back" onClick={handleCancel}>
-            Болих
-          </Button>,
-          <Button key="submit" type="primary" onClick={handleOk}>
-            Нэмэх
-          </Button>,
-        ]}
-      >
-        <div className="input-box">
-          <label>Сайтын нэр</label>
-          <input
-            type="text"
-            placeholder="facebook, twitter, website... гэх мэт"
+
+        <Modal
+          title="Линк нэмэх"
+          open={isModalOpen}
+          onCancel={() => setIsModalOpen(false)}
+          onOk={() => {
+            if (linkInput.name && linkInput.url) {
+              setLinks([...links, linkInput]);
+              setLinkInput({ name: "", url: "" });
+              setIsModalOpen(false);
+            } else toastControl("error", "Бүх талбарыг бөглөнө үү");
+          }}
+        >
+          <Input
+            placeholder="Сайтын нэр"
             value={linkInput.name}
             onChange={(e) =>
-              setInput((bi) => ({ ...bi, name: e.target.value }))
+              setLinkInput((p) => ({ ...p, name: e.target.value }))
             }
           />
-        </div>
-        <div className="input-box">
-          <label>Линк</label>
-          <input
-            type="text"
-            placeholder="https://facebook.com/webr ...."
-            value={linkInput.link}
+          <Input
+            placeholder="Линк"
+            value={linkInput.url}
             onChange={(e) =>
-              setInput((bi) => ({ ...bi, link: e.target.value }))
+              setLinkInput((p) => ({ ...p, url: e.target.value }))
             }
           />
-        </div>
-      </Modal>
+        </Modal>
+      </div>
     </>
   );
-};
-
-const mapStateToProps = (state) => {
-  return {
-    success: state.partnerReducer.success,
-    error: state.partnerReducer.error,
-    loading: state.partnerReducer.loading,
-    partner: state.partnerReducer.partner,
-    menus: state.memberCategoryReducer.menus,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    tinymceAddPhoto: (file) => dispatch(tinymceAddPhoto(file)),
-    updatePartner: (id, data) => dispatch(actions.updatePartner(id, data)),
-    getPartner: (id) => dispatch(actions.getPartner(id)),
-    loadMenus: () => dispatch(loadMenus()),
-    clear: () => dispatch(actions.clear()),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Edit);
+}
